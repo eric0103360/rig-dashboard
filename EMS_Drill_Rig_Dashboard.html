@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Rig Rebuild Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b1017;--surface:#111820;--surface2:#182030;--border:#1e3050;--accent:#00c8ff;--accent2:#ff6a00;--green:#00e676;--amber:#ffab00;--red:#ff3d57;--text:#d0e8ff;--muted:#4a6080;--card-glow:0 0 18px rgba(0,200,255,.10);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:999;}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:40px;width:100%;max-width:380px;text-align:center;}
+.login-icon{width:56px;height:56px;background:var(--accent);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 20px;}
+.login-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+.login-sub{font-size:11px;color:var(--muted);letter-spacing:1.5px;margin-bottom:28px;}
+.login-btns{display:flex;flex-direction:column;gap:10px;}
+.login-btn{padding:12px 20px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;letter-spacing:2px;cursor:pointer;border:1px solid;transition:all .2s;}
+.login-btn-admin{background:var(--accent);border-color:var(--accent);color:#0b1017;}
+.login-btn-admin:hover{box-shadow:0 0 18px rgba(0,200,255,.5);}
+.login-btn-view{background:transparent;border-color:var(--border);color:var(--muted);}
+.login-btn-view:hover{border-color:var(--green);color:var(--green);}
+.pw-wrap{display:none;flex-direction:column;gap:8px;margin-top:10px;}
+.pw-wrap input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:4px;font-family:'Exo 2',sans-serif;font-size:14px;text-align:center;letter-spacing:3px;width:100%;}
+.pw-wrap input:focus{outline:none;border-color:var(--accent);}
+.pw-error{font-size:11px;color:var(--red);display:none;margin-top:4px;}
+.login-divider{font-size:10px;color:var(--muted);letter-spacing:2px;margin:4px 0;}
+
+/* SETUP SCREEN */
+#setupScreen{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.setup-box{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--amber);border-radius:8px;padding:36px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.setup-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--amber);text-transform:uppercase;margin-bottom:6px;}
+.setup-sub{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.8;}
+.setup-steps{display:flex;flex-direction:column;gap:16px;margin-bottom:22px;}
+.step{display:flex;gap:14px;align-items:flex-start;}
+.step-num{width:28px;height:28px;background:var(--amber);color:#0b1017;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;flex-shrink:0;margin-top:2px;}
+.step-text{font-size:12px;color:var(--text);line-height:1.8;}
+.step-text a{color:var(--accent);text-decoration:none;}
+.step-text a:hover{text-decoration:underline;}
+.step-text code{background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--amber);}
+.setup-input-wrap{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.setup-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.setup-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:13px;width:100%;}
+.setup-input:focus{outline:none;border-color:var(--accent);}
+.setup-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,#0b1017,#0e1a28);position:sticky;top:0;z-index:200;}
+.logo-area{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:36px;height:36px;background:var(--accent);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.logo-img{display:flex;align-items:center;flex-shrink:0;}
+.header-divider{width:1px;height:36px;background:var(--border);margin:0 14px;flex-shrink:0;}
+h1{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);}
+.subtitle{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}}
+.live-label{font-size:10px;color:var(--green);letter-spacing:2px;}
+.mode-badge{font-size:9px;padding:3px 10px;border-radius:2px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.mode-admin{background:rgba(0,200,255,.15);color:var(--accent);border:1px solid rgba(0,200,255,.3);}
+.mode-viewer{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.logout-btn{background:none;border:1px solid var(--border);color:var(--muted);font-size:10px;padding:4px 10px;border-radius:3px;cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* SYNC BAR */
+#syncBar{display:flex;align-items:center;justify-content:space-between;padding:5px 20px;background:var(--surface);border-bottom:1px solid var(--border);font-size:10px;letter-spacing:1.5px;flex-wrap:wrap;gap:6px;}
+.sync-status{display:flex;align-items:center;gap:6px;}
+.sync-dot{width:6px;height:6px;border-radius:50%;}
+.sync-ok .sync-dot{background:var(--green);}
+.sync-saving .sync-dot{background:var(--amber);animation:pulse 1s infinite;}
+.sync-error .sync-dot{background:var(--red);}
+.sync-ok{color:var(--green);}
+.sync-saving{color:var(--amber);}
+.sync-error{color:var(--red);}
+.sync-time{color:var(--muted);}
+.setup-link-btn{background:none;border:1px solid var(--amber);color:var(--amber);font-size:9px;padding:3px 10px;border-radius:3px;cursor:pointer;letter-spacing:1px;}
+.setup-link-btn:hover{background:var(--amber);color:#0b1017;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
+.btn{padding:7px 16px;border-radius:3px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;cursor:pointer;border:1px solid;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#0b1017;}
+.btn-primary:hover{box-shadow:0 0 14px rgba(0,200,255,.5);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--muted);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-red{background:transparent;border-color:var(--red);color:var(--red);}
+.btn-red:hover{background:var(--red);color:#fff;}
+.spacer{flex:1;}
+.toggle-wrap{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);letter-spacing:1px;}
+.toggle{position:relative;width:40px;height:20px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border);border-radius:20px;transition:.3s;}
+.toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-slider{background:rgba(0,200,255,.2);border-color:var(--accent);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(20px);background:var(--accent);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.filter-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;margin-right:4px;}
+.tab{padding:6px 14px;border:1px solid var(--border);border-radius:2px;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab:hover{border-color:var(--accent);color:var(--accent);}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#0b1017;box-shadow:0 0 10px rgba(0,200,255,.35);}
+
+/* MAIN */
+main{padding:16px 20px;display:flex;flex-direction:column;gap:18px;}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-top:3px solid;padding:14px 18px;border-radius:4px;box-shadow:var(--card-glow);transition:transform .2s;}
+.kpi:hover{transform:translateY(-2px);}
+.kpi.blue{border-top-color:var(--accent);color:var(--accent);}
+.kpi.green{border-top-color:var(--green);color:var(--green);}
+.kpi.amber{border-top-color:var(--amber);color:var(--amber);}
+.kpi.red{border-top-color:var(--red);color:var(--red);}
+.kpi-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.kpi-value{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;line-height:1;}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px 20px;box-shadow:var(--card-glow);}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';display:block;width:3px;height:13px;background:var(--accent);border-radius:2px;}
+.chart-wrap{position:relative;height:200px;}
+.phase-grid{display:flex;flex-direction:column;gap:10px;}
+.phase-row{display:grid;grid-template-columns:155px 1fr 46px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(30,48,80,.5);}
+.phase-name{font-size:11px;color:var(--muted);}
+.phase-bar-track{height:9px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.phase-bar-fill{height:100%;border-radius:2px;transition:width 1.4s cubic-bezier(.2,.8,.2,1);}
+.phase-pct{font-family:'Share Tech Mono',monospace;font-size:11px;text-align:right;}
+.machine-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.machine-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:4px;padding:14px 18px;transition:all .2s;}
+.machine-card:hover{border-left-color:var(--accent2);box-shadow:0 0 18px rgba(255,106,0,.08);}
+.mc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.mc-id{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;}
+.mc-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.mc-badge{font-size:9px;padding:3px 9px;border-radius:2px;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+.badge-active{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.badge-pending{background:rgba(255,171,0,.12);color:var(--amber);border:1px solid rgba(255,171,0,.3);}
+.mc-pct{font-family:'Share Tech Mono',monospace;font-size:20px;margin-left:8px;}
+.bar-track{height:10px;background:var(--surface2);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px;}
+.bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.2,.8,.2,1);position:relative;}
+.bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 2.5s infinite;}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+.mc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.mc-metric{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:8px 10px;text-align:center;}
+.mc-metric-label{font-size:8px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;}
+.mc-metric-value{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;}
+.budget-used{color:var(--accent2);}
+.budget-remain{color:var(--green);}
+.hrs-planned{color:var(--accent);}
+.hrs-actual{color:var(--amber);}
+.finance-hidden{display:none!important;}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:15px;padding:2px 6px;border-radius:3px;transition:background .2s;}
+.icon-btn:hover{background:rgba(255,255,255,.08);}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:6px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:28px;}
+.modal-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--accent);margin-bottom:22px;text-transform:uppercase;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+input,select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:3px;font-family:'Exo 2',sans-serif;font-size:13px;width:100%;transition:border-color .2s;}
+input:focus,select:focus{outline:none;border-color:var(--accent);}
+select option{background:var(--surface2);}
+.modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.task-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+.task-table th{background:var(--surface2);color:var(--muted);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:8px;border:1px solid var(--border);text-align:left;}
+.task-table td{padding:5px 6px;border:1px solid var(--border);}
+.task-table td input,.task-table td select{padding:4px 7px;font-size:12px;}
+.task-table tr:nth-child(even){background:rgba(24,32,48,.5);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  h1{font-size:14px;letter-spacing:2px;}.subtitle{display:none;}
+  .kpi-strip{grid-template-columns:repeat(2,1fr);}
+  .charts-row{grid-template-columns:1fr;}
+  .mc-metrics{grid-template-columns:repeat(2,1fr);}
+  .phase-row{grid-template-columns:100px 1fr 40px;}
+  .form-grid{grid-template-columns:1fr;}
+  main{padding:12px;}.toolbar,.filter-bar{padding:8px 12px;}
+}
+
+/* ── PRINT STYLES ── */
+@media print {
+  body::before,#loginScreen,#setupScreen,.toolbar,#adminToolbar,#viewerToolbar,
+  .filter-bar,#syncBar,header .header-right,.icon-btn,
+  .charts-row .card:last-child{display:none!important;}
+  body{background:#fff!important;color:#000!important;}
+  .print-report{display:block!important;}
+  main{padding:0!important;}
+  .kpi{background:#f5f5f5!important;border:1px solid #ddd!important;color:#000!important;}
+  .kpi-value{color:#000!important;}
+  .kpi-label,.kpi-sub{color:#666!important;}
+  .card{background:#fff!important;border:1px solid #ddd!important;box-shadow:none!important;break-inside:avoid;}
+  .machine-card{background:#f9f9f9!important;border:1px solid #ddd!important;border-left:4px solid #333!important;break-inside:avoid;margin-bottom:12px;}
+  .mc-id,.mc-meta{color:#000!important;}
+  .mc-metric{background:#f0f0f0!important;border:1px solid #ddd!important;}
+  .mc-metric-label{color:#666!important;}
+  .mc-metric-value{color:#000!important;}
+  .bar-track{background:#eee!important;border:1px solid #ccc!important;}
+  .phase-bar-track{background:#eee!important;}
+  .card-title{color:#000!important;}
+  .card-title::before{background:#000!important;}
+  .phase-name{color:#444!important;}
+  .phase-pct{color:#000!important;}
+  h1{color:#000!important;}
+  .subtitle{color:#444!important;}
+  header{background:#fff!important;border-bottom:2px solid #000!important;position:relative!important;}
+  .logo-img img{filter:none!important;}
+  .print-header{display:flex!important;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:2px solid #000;margin-bottom:20px;}
+  .print-date{font-size:11px;color:#666;}
+  .kpi-strip{grid-template-columns:repeat(4,1fr)!important;}
+  .charts-row{grid-template-columns:1fr!important;}
+  .machine-cards-grid{grid-template-columns:repeat(2,1fr)!important;}
+  @page{margin:15mm;size:A4;}
+}
+
+
+@media(max-width:480px){
+  .machine-cards-grid{grid-template-columns:1fr;}
+  header{padding:10px 12px;}
+  .kpi-strip{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <img src="data:image/png;base64,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" style="height:60px;width:auto;margin:0 auto 16px;display:block;" alt="EMS Mining"/>
+    <div class="login-title">Drill Rig Rebuild Tracker</div>
+    <div class="login-sub">FLEET REBUILD MANAGEMENT SYSTEM</div>
+    <div class="login-btns">
+      <button class="login-btn login-btn-view" onclick="enterAsViewer()">👁  View Progress</button>
+      <div class="login-divider">— or —</div>
+      <button class="login-btn login-btn-admin" onclick="showPwField()">🔐  Admin Login</button>
+      <div class="pw-wrap" id="pwWrap">
+        <input type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPassword()"/>
+        <button class="login-btn login-btn-admin" onclick="checkPassword()">Unlock</button>
+        <div class="pw-error" id="pwError">Incorrect password. Try again.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JSONBIN SETUP -->
+<div id="setupScreen">
+  <div class="setup-box">
+    <div class="setup-title">⚡ One-Time Cloud Setup</div>
+    <div class="setup-sub">You need a free JSONBin account to sync data across all devices. Takes 2 minutes — only done once.</div>
+    <div class="setup-steps">
+      <div class="step"><div class="step-num">1</div>
+        <div class="step-text">Go to <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> and click <strong>Sign Up Free</strong>.</div>
+      </div>
+      <div class="step"><div class="step-num">2</div>
+        <div class="step-text">After signing in, click your profile → <strong>API Keys</strong>. Copy your <strong>Secret Key</strong> (starts with <code>$2b$</code>).</div>
+      </div>
+      <div class="step"><div class="step-num">3</div>
+        <div class="step-text">Paste it below and click <strong>Connect & Start</strong>. Your cloud bin is created automatically.</div>
+      </div>
+    </div>
+    <div class="setup-input-wrap">
+      <div class="setup-label">Your JSONBin Secret Key</div>
+      <input class="setup-input" id="apiKeyInput" type="password" placeholder="$2b$10$xxxxxxxxxxxxxxxx"/>
+    </div>
+    <div id="setupError" style="font-size:11px;color:var(--red);margin-bottom:12px;display:none;"></div>
+    <div class="setup-actions">
+      <button class="btn btn-outline" onclick="skipSync()">Skip — Work Offline</button>
+      <button class="btn btn-primary" onclick="connectJsonBin()">Connect &amp; Start →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appShell" style="display:none">
+  <header>
+    <div class="logo-area">
+      <div class="logo-img"><img src="data:image/png;base64,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" style="height:44px;width:auto;object-fit:contain;filter:brightness(1.05);" alt="EMS Mining"/></div>
+      <div class="header-divider"></div>
+      <div><h1>Drill Rig Rebuild Tracker</h1><div class="subtitle">EMS Mining &nbsp;·&nbsp; Fleet Rebuild Management System</div></div>
+    </div>
+    <div class="header-right">
+      <div class="live-dot"></div>
+      <span class="live-label" id="refreshCountdown">LIVE</span>
+      <span class="mode-badge" id="modeBadge"></span>
+      <button class="logout-btn" onclick="logout()">← Exit</button>
+    </div>
+  </header>
+
+  <div id="syncBar">
+    <div class="sync-status sync-ok" id="syncStatus"><div class="sync-dot"></div><span id="syncText">Connecting…</span></div>
+    <span class="sync-time" id="syncTime"></span>
+    <button class="setup-link-btn" id="reconfigBtn" style="display:none" onclick="showSetup()">⚙ Reconfigure Sync</button>
+  </div>
+
+  <div class="toolbar" id="adminToolbar" style="display:none">
+    <button class="btn btn-primary" onclick="openAddMachine()">+ Add Machine</button>
+    <button class="btn btn-outline" onclick="openManageTasks()">✏ Edit Tasks</button>
+  <button class="btn btn-outline" onclick="printReport()" style="border-color:var(--green);color:var(--green)">🖨 Print Report</button>
+    <div class="spacer"></div>
+    <div class="toggle-wrap">
+      <span>FINANCIALS</span>
+      <label class="toggle"><input type="checkbox" id="finToggle" checked onchange="toggleFinance(this.checked)"/><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+
+  <div class="toolbar" id="viewerToolbar" style="display:none">
+    <span style="font-size:11px;color:var(--muted);letter-spacing:1.5px;">👁 VIEW ONLY — Auto-refreshes every 60 seconds</span>
+    <div class="spacer"></div>
+    <div class="toggle-wrap">
+      <span>FINANCIALS</span>
+      <label class="toggle"><input type="checkbox" id="finToggleViewer" checked onchange="toggleFinance(this.checked)"/><span class="toggle-slider"></span></label>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filterBar"><span class="filter-label">Filter:</span></div>
+
+  <main>
+    <div class="kpi-strip" id="kpiStrip"></div>
+    <div class="charts-row">
+      <div class="card"><div class="card-title">Machine Build Progress</div><div class="chart-wrap"><canvas id="buildChart"></canvas></div></div>
+      <div class="card"><div class="card-title">Rebuild Phase Progress</div><div class="phase-grid" id="phaseGrid"></div></div>
+    </div>
+    <div class="charts-row">
+      <div class="card"><div class="card-title">Planned vs Actual Days</div><div class="chart-wrap"><canvas id="daysChart"></canvas></div></div>
+      <div class="card finance-section"><div class="card-title">Budget Used vs Remaining</div><div class="chart-wrap"><canvas id="budgetChart"></canvas></div></div>
+    </div>
+    <div class="card"><div class="card-title">Per-Machine Dashboard</div><div class="machine-cards-grid" id="machineCards"></div></div>
+  </main>
+</div>
+
+<!-- MODAL: Machine -->
+<div class="modal-overlay" id="machineModal" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="machineModalTitle">Add Machine</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Machine ID *</label><input id="f_id" placeholder="e.g. DK017" maxlength="20"/></div>
+      <div class="form-group"><label>Model</label><input id="f_model" placeholder="e.g. D25KS"/></div>
+      <div class="form-group"><label>Rebuild Number</label><input id="f_rebuild" type="number" placeholder="e.g. 9"/></div>
+      <div class="form-group"><label>Status</label><select id="f_status"><option value="pending">Pending</option><option value="active">Active</option><option value="complete">Complete</option></select></div>
+      <div class="form-group"><label>Total Budget (R)</label><input id="f_budget" type="number" placeholder="e.g. 6000000"/></div>
+      <div class="form-group"><label>Budget Used (R)</label><input id="f_budgetUsed" type="number" placeholder="e.g. 0"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('machineModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMachine()">Save Machine</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Tasks -->
+<div class="modal-overlay" id="taskModal" style="display:none">
+  <div class="modal" style="max-width:780px">
+    <div class="modal-title">Edit Task Progress</div>
+    <div class="form-group" style="margin-bottom:14px"><label>Select Machine</label><select id="taskMachineSelect" onchange="renderTaskEditor()"></select></div>
+    <div id="taskEditorArea"></div>
+    <hr class="divider"/>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">↳ Update <strong style="color:var(--text)">% Complete</strong>, <strong style="color:var(--text)">Actual Days</strong> and <strong style="color:var(--text)">Actual Hours</strong>.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('taskModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTaskEdits()">Save &amp; Update Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Delete -->
+<div class="modal-overlay" id="deleteModal" style="display:none">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title">Confirm Delete</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">Remove <strong id="deleteTargetName" style="color:var(--red)"></strong> and all its tasks?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn btn-red" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ╔══════════════════════════════════════════════════════╗
+// ║                                                      ║
+// ║   ▼▼▼  SET YOUR ADMIN PASSWORD BELOW  ▼▼▼           ║
+// ║                                                      ║
+// ╚══════════════════════════════════════════════════════╝
+
+const ADMIN_PASSWORD = "ericF.01033";
+
+// ╔══════════════════════════════════════════════════════╗
+// ║   ▲▲▲  REPLACE  YOUR_PASSWORD_HERE  ▲▲▲            ║
+// ║   Example:  const ADMIN_PASSWORD = "Rig@2024!";     ║
+// ╚══════════════════════════════════════════════════════╝
+
+// Storage keys
+const KEY_API  = 'rrt_apikey';
+const KEY_BIN  = 'rrt_binid';
+
+// Default data
+const PHASES = ['Strip, Assess and Repair','Chassis Assy','Cab Assy','Mast Assy & Installation','Commissioning'];
+let MACHINES = {
+  DK014:{model:'D25KS',rebuild:6,budget:6000000,budgetUsed:5160000,status:'active'},
+  DK015:{model:'D25KS',rebuild:7,budget:6000000,budgetUsed:0,status:'pending'},
+  DK016:{model:'D25KS',rebuild:8,budget:6000000,budgetUsed:0,status:'pending'},
+};
+let TASKS = [
+  {machine:'DK014',phase:'Strip, Assess and Repair',planned:5,actual:5,pct:100,plannedHrs:786,actualHrs:681},
+  {machine:'DK014',phase:'Chassis Assy',planned:12,actual:10,pct:100,plannedHrs:null,actualHrs:null},
+  {machine:'DK014',phase:'Cab Assy',planned:5,actual:5,pct:100,plannedHrs:null,actualHrs:null},
+  {machine:'DK014',phase:'Mast Assy & Installation',planned:30,actual:32,pct:95,plannedHrs:null,actualHrs:null},
+  {machine:'DK014',phase:'Commissioning',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK015',phase:'Strip, Assess and Repair',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK015',phase:'Chassis Assy',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK015',phase:'Cab Assy',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK015',phase:'Mast Assy & Installation',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK015',phase:'Commissioning',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK016',phase:'Strip, Assess and Repair',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK016',phase:'Chassis Assy',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK016',phase:'Cab Assy',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK016',phase:'Mast Assy & Installation',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+  {machine:'DK016',phase:'Commissioning',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null},
+];
+
+// App state
+let activeFilter='ALL', showFinance=true, isAdmin=false;
+let editingMachineId=null, deleteTargetId=null, taskEditBuffer=[];
+let buildChartInst, daysChartInst, budgetChartInst;
+let refreshTimer=null, countdownVal=60, syncMode='offline';
+
+// Helpers
+const C={acc:'#00c8ff',green:'#00e676',amber:'#ffab00',red:'#ff3d57'};
+function fmtR(n){if(!n&&n!==0)return'—';if(n>=1e6)return'R '+(n/1e6).toFixed(2)+'M';if(n>=1e3)return'R '+(n/1e3).toFixed(0)+'K';return'R '+n;}
+function barColor(p){return p===100?C.green:p>=50?C.acc:p>0?C.amber:'#2a3a50';}
+function overallPct(mid){const ts=TASKS.filter(t=>t.machine===mid);return ts.length?Math.round(ts.reduce((s,t)=>s+t.pct,0)/ts.length):0;}
+function filteredMachines(){return activeFilter==='ALL'?Object.keys(MACHINES):[activeFilter];}
+function filteredTasks(){const ms=filteredMachines();return TASKS.filter(t=>ms.includes(t.machine));}
+function closeModal(id){document.getElementById(id).style.display='none';}
+function openModal(id){document.getElementById(id).style.display='flex';}
+function nowStr(){return new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});}
+
+// ── LOGIN ──
+function showPwField(){document.getElementById('pwWrap').style.display='flex';document.getElementById('pwInput').focus();}
+function checkPassword(){
+  if(document.getElementById('pwInput').value===ADMIN_PASSWORD){
+    isAdmin=true;document.getElementById('loginScreen').style.display='none';
+    document.getElementById('pwError').style.display='none';startApp();
+  } else {document.getElementById('pwError').style.display='block';document.getElementById('pwInput').value='';}
+}
+function enterAsViewer(){isAdmin=false;document.getElementById('loginScreen').style.display='none';startApp();}
+function logout(){
+  document.getElementById('appShell').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwWrap').style.display='none';
+  clearInterval(refreshTimer);
+}
+
+// ── START APP ──
+async function startApp(){
+  document.getElementById('appShell').style.display='block';
+  document.getElementById('modeBadge').textContent=isAdmin?'ADMIN':'VIEWER';
+  document.getElementById('modeBadge').className='mode-badge '+(isAdmin?'mode-admin':'mode-viewer');
+  document.getElementById('adminToolbar').style.display=isAdmin?'flex':'none';
+  document.getElementById('viewerToolbar').style.display=isAdmin?'none':'flex';
+  document.getElementById('reconfigBtn').style.display=isAdmin?'inline-block':'none';
+
+  syncMode='online';
+  await loadFromCloud();
+
+  buildFilterBar();renderAll();startAutoRefresh();
+}
+
+// ── JSONBIN ──
+function getApiKey(){return '$2a$10$kXkXRrwRRtuHFd5Kg4BdgOJg3P8buYjBspVr8sRhZWP2xdtMw3adm';}
+function getBinId(){return '69bfbc20b7ec241ddc8f9629';}
+
+async function connectJsonBin(){
+  const key=(document.getElementById('apiKeyInput').value||'').trim();
+  if(!key){showSetupError('Please paste your API key.');return;}
+  setSyncStatus('saving','Connecting…');
+  try{
+    const res=await fetch('https://api.jsonbin.io/v3/b',{method:'POST',
+      headers:{'Content-Type':'application/json','X-Master-Key':key,'X-Bin-Name':'RigRebuildTracker'},
+      body:JSON.stringify({machines:MACHINES,tasks:TASKS})});
+    if(!res.ok)throw new Error('Status '+res.status+' — check your API key');
+    const data=await res.json();
+    localStorage.setItem(KEY_API,key);localStorage.setItem(KEY_BIN,data.metadata.id);
+    syncMode='online';document.getElementById('setupScreen').style.display='none';
+    setSyncStatus('ok','Connected ✓  Bin: '+data.metadata.id);
+    buildFilterBar();renderAll();startAutoRefresh();
+  }catch(e){showSetupError('Failed: '+e.message);}
+}
+function showSetupError(msg){const el=document.getElementById('setupError');el.textContent=msg;el.style.display='block';setSyncStatus('error',msg);}
+function skipSync(){syncMode='offline';document.getElementById('setupScreen').style.display='none';setSyncStatus('error','Offline mode — changes not synced');buildFilterBar();renderAll();startAutoRefresh();}
+function showSetup(){document.getElementById('setupScreen').style.display='flex';}
+
+async function loadFromCloud(){
+  if(syncMode!=='online')return;setSyncStatus('saving','Loading…');
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${getBinId()}/latest`,{headers:{'X-Master-Key':getApiKey()}});
+    if(!res.ok)throw new Error(res.status);
+    const data=await res.json();MACHINES=data.record.machines;TASKS=data.record.tasks;
+    setSyncStatus('ok','Updated '+nowStr());
+  }catch(e){setSyncStatus('error','Load failed: '+e.message);}
+}
+async function saveToCloud(){
+  if(syncMode!=='online')return;setSyncStatus('saving','Saving…');
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${getBinId()}`,{method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':getApiKey()},
+      body:JSON.stringify({machines:MACHINES,tasks:TASKS})});
+    if(!res.ok)throw new Error(res.status);
+    setSyncStatus('ok','Saved '+nowStr());
+  }catch(e){setSyncStatus('error','Save failed: '+e.message);}
+}
+function setSyncStatus(type,msg){
+  const el=document.getElementById('syncStatus');
+  el.className='sync-status sync-'+type;
+  document.getElementById('syncText').textContent=msg;
+}
+
+// ── AUTO-REFRESH ──
+function startAutoRefresh(){
+  clearInterval(refreshTimer);countdownVal=60;
+  refreshTimer=setInterval(async()=>{
+    countdownVal--;
+    document.getElementById('refreshCountdown').textContent=isAdmin?'ADMIN':(countdownVal+'s');
+    if(countdownVal<=0){
+      countdownVal=60;
+      if(syncMode==='online'){await loadFromCloud();buildFilterBar();renderAll();}
+    }
+  },1000);
+}
+
+// ── FILTER ──
+function buildFilterBar(){
+  const bar=document.getElementById('filterBar');
+  bar.innerHTML=`<span class="filter-label">Filter:</span>
+    <button class="tab ${activeFilter==='ALL'?'active':''}" onclick="setFilter('ALL')">ALL MACHINES</button>
+    ${Object.keys(MACHINES).map(m=>`<button class="tab ${activeFilter===m?'active':''}" onclick="setFilter('${m}')">${m}</button>`).join('')}`;
+}
+function setFilter(f){activeFilter=f;buildFilterBar();renderAll();}
+
+// ── FINANCE TOGGLE ──
+function toggleFinance(on){
+  showFinance=on;
+  document.querySelectorAll('.finance-section').forEach(el=>el.classList.toggle('finance-hidden',!on));
+  renderAll();
+}
+
+// ── KPIs ──
+function renderKPIs(){
+  const ms=filteredMachines(),ts=filteredTasks();
+  const tb=ms.reduce((s,m)=>s+MACHINES[m].budget,0);
+  const tu=ms.reduce((s,m)=>s+MACHINES[m].budgetUsed,0);
+  const ph=ts.reduce((s,t)=>s+(t.plannedHrs||0),0);
+  const ah=ts.reduce((s,t)=>s+(t.actualHrs||0),0);
+  const avgPct=ms.length?Math.round(ms.reduce((s,m)=>s+overallPct(m),0)/ms.length):0;
+  const kpis=showFinance?[
+    {label:'Budget Used',value:fmtR(tu),sub:tb?((tu/tb)*100).toFixed(1)+'% of total':'—',cls:'blue'},
+    {label:'Budget Remaining',value:fmtR(tb-tu),sub:tb?(((tb-tu)/tb)*100).toFixed(1)+'% left':'—',cls:'green'},
+    {label:'Planned Hours',value:ph||'—',sub:'Total planned',cls:'amber'},
+    {label:'Actual Hours',value:ah||'—',sub:'Hours logged',cls:'red'},
+  ]:[
+    {label:'Fleet Progress',value:avgPct+'%',sub:ms.length+' machine'+(ms.length!==1?'s':''),cls:'blue'},
+    {label:'Tasks Complete',value:ts.filter(t=>t.pct===100).length+'/'+ts.length,sub:'Phases done',cls:'green'},
+    {label:'In Progress',value:ts.filter(t=>t.pct>0&&t.pct<100).length,sub:'Phases active',cls:'amber'},
+    {label:'Not Started',value:ts.filter(t=>t.pct===0).length,sub:'Phases pending',cls:'red'},
+  ];
+  document.getElementById('kpiStrip').innerHTML=kpis.map(k=>`<div class="kpi ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+}
+
+// ── CHARTS ──
+function renderBuildChart(){
+  const ms=filteredMachines(),pcts=ms.map(m=>overallPct(m));
+  if(buildChartInst)buildChartInst.destroy();
+  buildChartInst=new Chart(document.getElementById('buildChart'),{type:'bar',
+    data:{labels:ms,datasets:[{label:'% Complete',data:pcts,backgroundColor:pcts.map(p=>barColor(p)),borderRadius:3,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.x+'% Complete'}}},
+      scales:{x:{min:0,max:100,grid:{color:'rgba(30,48,80,.5)'},ticks:{color:'#4a6080',font:{family:'Share Tech Mono',size:10},callback:v=>v+'%'}},
+              y:{grid:{color:'rgba(30,48,80,.3)'},ticks:{color:'#d0e8ff',font:{family:'Rajdhani',size:12,weight:'700'}}}}}});
+}
+function renderPhaseGrid(){
+  const ms=filteredMachines();
+  document.getElementById('phaseGrid').innerHTML=PHASES.map(ph=>{
+    const rel=TASKS.filter(t=>ms.includes(t.machine)&&t.phase===ph);
+    const avg=rel.length?Math.round(rel.reduce((s,t)=>s+t.pct,0)/rel.length):0;
+    return`<div class="phase-row"><div class="phase-name">${ph}</div><div class="phase-bar-track"><div class="phase-bar-fill" style="width:${avg}%;background:${barColor(avg)}"></div></div><div class="phase-pct" style="color:${barColor(avg)}">${avg}%</div></div>`;
+  }).join('');
+}
+function renderDaysChart(){
+  const ms=filteredMachines();
+  const data=PHASES.map(ph=>{const rel=TASKS.filter(t=>ms.includes(t.machine)&&t.phase===ph);
+    return{phase:ph,planned:rel.reduce((s,t)=>s+t.planned,0),actual:rel.reduce((s,t)=>s+t.actual,0)};});
+  if(daysChartInst)daysChartInst.destroy();
+  daysChartInst=new Chart(document.getElementById('daysChart'),{type:'bar',
+    data:{labels:data.map(d=>d.phase.length>13?d.phase.substring(0,12)+'…':d.phase),
+      datasets:[{label:'Planned',data:data.map(d=>d.planned),backgroundColor:'rgba(0,200,255,.7)',borderRadius:3,borderSkipped:false},
+                {label:'Actual', data:data.map(d=>d.actual), backgroundColor:'rgba(255,171,0,.7)', borderRadius:3,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#4a6080',font:{family:'Exo 2',size:10}}}},
+      scales:{x:{grid:{color:'rgba(30,48,80,.5)'},ticks:{color:'#4a6080',font:{size:9}}},y:{grid:{color:'rgba(30,48,80,.4)'},ticks:{color:'#4a6080',font:{family:'Share Tech Mono',size:9}}}}}});
+}
+function renderBudgetChart(){
+  const ms=filteredMachines();
+  if(budgetChartInst)budgetChartInst.destroy();
+  budgetChartInst=new Chart(document.getElementById('budgetChart'),{type:'bar',
+    data:{labels:ms,datasets:[
+      {label:'Used',     data:ms.map(m=>MACHINES[m].budgetUsed),                backgroundColor:'rgba(255,106,0,.8)',borderRadius:3,borderSkipped:false},
+      {label:'Remaining',data:ms.map(m=>MACHINES[m].budget-MACHINES[m].budgetUsed),backgroundColor:'rgba(0,230,118,.65)',borderRadius:3,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#4a6080',font:{family:'Exo 2',size:10}}}},
+      scales:{x:{grid:{color:'rgba(30,48,80,.5)'},ticks:{color:'#d0e8ff',font:{family:'Rajdhani',size:11,weight:'700'}}},
+              y:{grid:{color:'rgba(30,48,80,.4)'},ticks:{color:'#4a6080',font:{family:'Share Tech Mono',size:9},callback:v=>v>=1e6?'R '+(v/1e6).toFixed(1)+'M':v>=1e3?'R '+(v/1e3).toFixed(0)+'K':'R'+v}}}}});
+}
+
+// ── MACHINE CARDS ──
+function renderMachineCards(){
+  const ms=filteredMachines();
+  if(!ms.length){document.getElementById('machineCards').innerHTML='<div class="empty">No machines yet. Click + Add Machine to get started.</div>';return;}
+  document.getElementById('machineCards').innerHTML=ms.map(mid=>{
+    const m=MACHINES[mid],ts=TASKS.filter(t=>t.machine===mid);
+    const pct=overallPct(mid),rem=m.budget-m.budgetUsed,bc=barColor(pct);
+    const ph=ts.reduce((s,t)=>s+(t.plannedHrs||0),0),ah=ts.reduce((s,t)=>s+(t.actualHrs||0),0);
+    const badge=m.status==='active'?`<span class="mc-badge badge-active">● Active</span>`:m.status==='complete'?`<span class="mc-badge badge-active" style="color:var(--accent);border-color:rgba(0,200,255,.3);background:rgba(0,200,255,.1)">✓ Done</span>`:`<span class="mc-badge badge-pending">◌ Pending</span>`;
+    const editBtns=isAdmin?`<button class="icon-btn" title="Edit" onclick="openEditMachine('${mid}')">✏</button><button class="icon-btn" title="Rename ID" onclick="openRenameMachine('${mid}')" style="color:var(--amber)">🔤</button><button class="icon-btn" title="Delete" onclick="openDeleteMachine('${mid}')" style="color:var(--red)">🗑</button>`:'';
+    const finMetrics=showFinance?`
+      <div class="mc-metric"><div class="mc-metric-label">Budget Used</div><div class="mc-metric-value budget-used">${fmtR(m.budgetUsed)}</div></div>
+      <div class="mc-metric"><div class="mc-metric-label">Remaining</div><div class="mc-metric-value budget-remain">${fmtR(rem)}</div></div>
+      <div class="mc-metric"><div class="mc-metric-label">Planned Hrs</div><div class="mc-metric-value hrs-planned">${ph||'—'}</div></div>
+      <div class="mc-metric"><div class="mc-metric-label">Actual Hrs</div><div class="mc-metric-value hrs-actual">${ah||'—'}</div></div>`:`
+      <div class="mc-metric"><div class="mc-metric-label">Tasks Done</div><div class="mc-metric-value hrs-planned">${ts.filter(t=>t.pct===100).length}/${ts.length}</div></div>
+      <div class="mc-metric"><div class="mc-metric-label">In Progress</div><div class="mc-metric-value hrs-actual">${ts.filter(t=>t.pct>0&&t.pct<100).length}</div></div>
+      <div class="mc-metric"><div class="mc-metric-label">Not Started</div><div class="mc-metric-value" style="color:var(--muted)">${ts.filter(t=>t.pct===0).length}</div></div>
+      <div class="mc-metric"><div class="mc-metric-label">Rebuild #</div><div class="mc-metric-value" style="color:var(--text)">${m.rebuild||'—'}</div></div>`;
+    return`<div class="machine-card"><div class="mc-header"><div><div class="mc-id">${mid}</div><div class="mc-meta">${m.model||'—'} · Rebuild #${m.rebuild||'—'}</div></div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">${badge}<span class="mc-pct" style="color:${bc}">${pct}%</span>${editBtns}</div></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="mc-metrics">${finMetrics}</div></div>`;
+  }).join('');
+}
+
+function renderAll(){renderKPIs();renderBuildChart();renderPhaseGrid();renderDaysChart();if(showFinance)renderBudgetChart();renderMachineCards();}
+
+// ── ADD/EDIT MACHINE ──
+function openAddMachine(){
+  editingMachineId=null;document.getElementById('machineModalTitle').textContent='Add Machine';
+  ['f_id','f_model','f_rebuild','f_budget','f_budgetUsed'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_status').value='pending';document.getElementById('f_id').disabled=false;openModal('machineModal');
+}
+function openEditMachine(mid){
+  editingMachineId=mid;const m=MACHINES[mid];
+  document.getElementById('machineModalTitle').textContent='Edit — '+mid;
+  document.getElementById('f_id').value=mid;document.getElementById('f_id').disabled=true;
+  document.getElementById('f_model').value=m.model||'';document.getElementById('f_rebuild').value=m.rebuild||'';
+  document.getElementById('f_status').value=m.status||'pending';
+  document.getElementById('f_budget').value=m.budget||'';document.getElementById('f_budgetUsed').value=m.budgetUsed||0;
+  openModal('machineModal');
+}
+async function saveMachine(){
+  const id=(document.getElementById('f_id').value||'').trim().toUpperCase();
+  if(!id){alert('Machine ID is required.');return;}
+  if(!editingMachineId&&MACHINES[id]){alert('Machine '+id+' already exists.');return;}
+  const mid=editingMachineId||id;
+  MACHINES[mid]={model:document.getElementById('f_model').value||'',rebuild:parseInt(document.getElementById('f_rebuild').value)||0,
+    status:document.getElementById('f_status').value,budget:parseFloat(document.getElementById('f_budget').value)||0,
+    budgetUsed:parseFloat(document.getElementById('f_budgetUsed').value)||0};
+  if(!editingMachineId)PHASES.forEach(ph=>TASKS.push({machine:mid,phase:ph,planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null}));
+  closeModal('machineModal');await saveToCloud();buildFilterBar();renderAll();
+}
+function openDeleteMachine(mid){deleteTargetId=mid;document.getElementById('deleteTargetName').textContent=mid;openModal('deleteModal');}
+async function confirmDelete(){
+  if(!deleteTargetId)return;delete MACHINES[deleteTargetId];TASKS=TASKS.filter(t=>t.machine!==deleteTargetId);
+  if(activeFilter===deleteTargetId)activeFilter='ALL';deleteTargetId=null;closeModal('deleteModal');
+  await saveToCloud();buildFilterBar();renderAll();
+}
+
+// ── TASK EDITOR ──
+function openManageTasks(){
+  const sel=document.getElementById('taskMachineSelect');const mids=Object.keys(MACHINES);
+  if(!mids.length){alert('Add a machine first.');return;}
+  sel.innerHTML=mids.map(m=>`<option value="${m}">${m}</option>`).join('');
+  sel.value=activeFilter!=='ALL'?activeFilter:mids[0];renderTaskEditor();openModal('taskModal');
+}
+function renderTaskEditor(){
+  const mid=document.getElementById('taskMachineSelect').value;
+  taskEditBuffer=TASKS.filter(t=>t.machine===mid).map(t=>({...t}));
+  if(!taskEditBuffer.length){document.getElementById('taskEditorArea').innerHTML='<div class="empty">No tasks found.</div>';return;}
+  document.getElementById('taskEditorArea').innerHTML=`<div style="overflow-x:auto"><table class="task-table"><thead><tr>
+    <th>Phase</th><th>Plan Days</th><th>Act Days</th><th>Plan Hrs</th><th>Act Hrs</th><th>% Done</th><th></th>
+  </tr></thead><tbody>${taskEditBuffer.map((t,i)=>`<tr>
+    <td><input value="${t.phase}" oninput="taskEditBuffer[${i}].phase=this.value" style="min-width:155px"/></td>
+    <td><input type="number" value="${t.planned}" oninput="taskEditBuffer[${i}].planned=+this.value" style="width:65px"/></td>
+    <td><input type="number" value="${t.actual}" oninput="taskEditBuffer[${i}].actual=+this.value" style="width:65px"/></td>
+    <td><input type="number" value="${t.plannedHrs||''}" placeholder="—" oninput="taskEditBuffer[${i}].plannedHrs=+this.value||null" style="width:65px"/></td>
+    <td><input type="number" value="${t.actualHrs||''}" placeholder="—" oninput="taskEditBuffer[${i}].actualHrs=+this.value||null" style="width:65px"/></td>
+    <td><input type="number" min="0" max="100" value="${t.pct}" oninput="taskEditBuffer[${i}].pct=Math.min(100,Math.max(0,+this.value))" style="width:58px"/></td>
+    <td><button class="icon-btn" style="color:var(--red)" onclick="removeTaskRow(${i})">✕</button></td>
+  </tr>`).join('')}</tbody></table></div>
+  <button class="btn btn-outline" style="margin-top:10px;font-size:12px" onclick="addTaskRow()">+ Add Phase Row</button>`;
+}
+function addTaskRow(){const mid=document.getElementById('taskMachineSelect').value;taskEditBuffer.push({machine:mid,phase:'New Phase',planned:5,actual:0,pct:0,plannedHrs:null,actualHrs:null});renderTaskEditor();}
+function removeTaskRow(i){taskEditBuffer.splice(i,1);renderTaskEditor();}
+async function saveTaskEdits(){
+  const mid=document.getElementById('taskMachineSelect').value;
+  TASKS=TASKS.filter(t=>t.machine!==mid);taskEditBuffer.forEach(t=>TASKS.push({...t,machine:mid}));
+  closeModal('taskModal');await saveToCloud();renderAll();
+}
+
+
+// ── RENAME MACHINE ID ──
+function openRenameMachine(mid){
+  document.getElementById('rename_old').value=mid;
+  document.getElementById('rename_new').value='';
+  openModal('renameModal');
+}
+async function confirmRename(){
+  const oldId=document.getElementById('rename_old').value;
+  const newId=(document.getElementById('rename_new').value||'').trim().toUpperCase();
+  if(!newId){alert('Please enter a new Machine ID.');return;}
+  if(newId===oldId){closeModal('renameModal');return;}
+  if(MACHINES[newId]){alert('Machine '+newId+' already exists. Please choose a different ID.');return;}
+  // Rename in MACHINES
+  MACHINES[newId]=JSON.parse(JSON.stringify(MACHINES[oldId]));
+  delete MACHINES[oldId];
+  // Rename in TASKS
+  TASKS.forEach(t=>{if(t.machine===oldId)t.machine=newId;});
+  // Fix filter
+  if(activeFilter===oldId)activeFilter=newId;
+  closeModal('renameModal');
+  await saveToCloud();
+  buildFilterBar();
+  renderAll();
+}
+
+// ── PRINT REPORT ──
+function printReport(){
+  // Add print date to page
+  const now=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+  let el=document.getElementById('printDate');
+  if(!el){
+    el=document.createElement('div');
+    el.id='printDate';
+    el.style.cssText='display:none;font-size:11px;color:#666;text-align:right;padding:8px 20px;';
+    document.querySelector('main').prepend(el);
+  }
+  el.textContent='Report generated: '+now+' | EMS Mining Fleet Rebuild Tracker';
+  el.style.display='block';
+  window.print();
+  setTimeout(()=>{el.style.display='none';},1000);
+}
+
+// Init
+Chart.defaults.color='#4a6080';Chart.defaults.font.family='Exo 2';
+</script>
+
+<!-- MODAL: Rename Machine ID -->
+<div class="modal-overlay" id="renameModal" style="display:none">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title" style="color:var(--amber)">Rename Machine ID</div>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:18px;">Change the Machine ID — all tasks will update automatically.</p>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Current ID</label>
+      <input id="rename_old" disabled style="opacity:.5"/>
+    </div>
+    <div class="form-group">
+      <label>New Machine ID *</label>
+      <input id="rename_new" placeholder="e.g. DK017" maxlength="20"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('renameModal')">Cancel</button>
+      <button class="btn" style="background:var(--amber);border-color:var(--amber);color:#0b1017" onclick="confirmRename()">Rename</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
