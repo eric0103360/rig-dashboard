@@ -209,25 +209,25 @@ input:focus,select:focus{border-color:var(--gold);}
   <div style="display:flex;align-items:center;gap:11px;">
     <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
     <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
-    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">25 May 2026<br>20:43</div>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">25 May 2026<br>20:47</div>
     <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="logout()">SIGN OUT</button>
   </div>
 </div>
 
 <div class="nav">
-  <div class="nt" onclick="sp('fleet',this)">FLEET OVERVIEW</div>
+  <div class="nt active" onclick="sp('fleet',this)">FLEET OVERVIEW</div>
   <div class="nt" onclick="sp('phases',this)">PHASE PROGRESS</div>
   <div class="nt" onclick="sp('machine',this)">MACHINE DETAIL</div>
   <div class="nt" onclick="sp('budget',this)">BUDGET</div>
   <div class="nt ao" id="tab-tasks" onclick="sp('tasks',this)" style="display: block;">✎ TASK ENTRY</div>
   <div class="nt" id="tab-labour" onclick="sp('labour',this)">▶ LABOUR COST</div>
-  <div class="nt ao active" id="tab-edit" onclick="sp('edit',this)" style="display: block;">✎ DATA ENTRY</div>
+  <div class="nt ao" id="tab-edit" onclick="sp('edit',this)" style="display: block;">✎ DATA ENTRY</div>
   <div class="nt" onclick="showPrint()">⎙ PRINT</div>
 </div>
 
 <!-- PAGE 1: FLEET -->
-<div id="page-fleet" class="page">
+<div id="page-fleet" class="page active">
   <div class="krow" id="fleet-kpis">
     <div class="kpi r"><div class="kl">BUDGET USED</div><div class="kv r">R 7.23M</div><div class="ks">8% of R90M fleet budget</div></div>
     <div class="kpi gr"><div class="kl">BUDGET REMAINING</div><div class="kv gr">R 82.77M</div><div class="ks">92% remaining</div></div>
@@ -1816,7 +1816,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 <!-- PAGE 6: DATA ENTRY (admin) -->
-<div id="page-edit" class="page active">
+<div id="page-edit" class="page">
   <div style="background:rgba(245,168,0,0.07);border:1px solid var(--gold);border-radius:6px;padding:8px 13px;margin-bottom:13px;font-size:11px;color:var(--gold);">
     ✎ &nbsp;Data Capturer — Edit machine status, budget and notes. For task-level hours use the TASK ENTRY tab.
   </div>
