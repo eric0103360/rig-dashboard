@@ -1,0 +1,1419 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>EMS Mining — Sandvik D25KS Rebuild Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#3A3D42;--bg2:#2E3035;--bg3:#34373C;--bg4:#26282D;
+  --gold:#F0B42D;--cyan:#00D4FF;--green:#00C896;--red:#FF5555;
+  --text:#E8EAF0;--muted:#8A9AAA;--border:#4A4D54;
+}
+body{font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+input[type=number],input[type=text],input[type=password],select{background:var(--bg4);border:1px solid var(--border);color:var(--text);font-family:inherit;padding:5px 9px;border-radius:5px;font-size:11px;outline:none;}
+input:focus,select:focus{border-color:var(--gold);}
+.btn{background:var(--gold);color:#000;font-weight:800;font-size:11px;padding:7px 16px;border-radius:5px;border:none;cursor:pointer;}
+.btn:hover{opacity:0.85;}
+.btn.gold{background:var(--gold);}
+.btn.red{background:var(--red);color:#fff;}
+.btn.dark{background:#4A4D54;color:#E8EAF0;border:1px solid #5A5D66;}
+.btn.green{background:var(--green);color:#000;}
+[contenteditable]{outline:none;border-radius:3px;padding:1px 4px;cursor:text;}
+[contenteditable]:hover{background:rgba(240,180,45,0.10);}
+[contenteditable]:focus{background:rgba(240,180,45,0.15);box-shadow:0 0 0 1px var(--gold);}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:#3A3D42;display:flex;align-items:center;justify-content:center;z-index:9999;}
+.login-box{background:#2E3035;border:1px solid var(--border);border-radius:12px;padding:34px 38px;width:360px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+.login-title{font-size:16px;font-weight:800;color:var(--gold);margin:12px 0 3px;letter-spacing:1px;}
+.login-sub{font-size:10px;color:var(--muted);margin-bottom:22px;}
+.lf{margin-bottom:11px;text-align:left;}
+.lf label{font-size:9px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:0.5px;font-weight:700;}
+.lf input{width:100%;padding:9px 12px;font-size:13px;}
+.lerr{font-size:10px;color:var(--red);margin-top:7px;min-height:16px;}
+.rbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.rbadge.viewer{background:rgba(245,168,0,0.15);border:1px solid var(--gold);color:var(--gold);}
+.rbadge.admin{background:rgba(245,168,0,0.15);border:1px solid var(--gold);color:var(--gold);}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 22px;background:var(--bg2);border-bottom:3px solid #F5A800;}
+.hdr-main{font-size:14px;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.hdr-sub{font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:1px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,200,150,0.4);}50%{box-shadow:0 0 0 5px rgba(0,200,150,0);}}
+
+/* NAV */
+.nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 22px;overflow-x:auto;}
+.nt{padding:9px 15px;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color 0.15s;}
+.nt:hover{color:var(--text);}
+.nt.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nt.ao{display:none;}
+
+/* PAGES */
+.page{display:none;padding:14px 22px;}
+.page.active{display:block;}
+.sec{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:2px;margin:13px 0 8px;display:flex;align-items:center;gap:7px;}
+.sec::before{content:"";width:3px;height:12px;background:var(--gold);border-radius:2px;flex-shrink:0;}
+
+/* KPI */
+.krow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:13px;}
+.kpi{background:var(--bg3);border-radius:7px;padding:13px 15px;border-top:2px solid var(--border);}
+.kpi.c{border-top-color:var(--gold);}.kpi.g{border-top-color:var(--gold);}
+.kpi.gr{border-top-color:var(--green);}.kpi.r{border-top-color:var(--red);}
+.kl{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;font-weight:700;}
+.kv{font-size:22px;font-weight:800;line-height:1;}
+.kv.c{color:var(--gold);}.kv.g{color:var(--gold);}.kv.gr{color:var(--green);}.kv.r{color:var(--red);}
+.ks{font-size:9px;color:var(--muted);margin-top:3px;}
+
+/* FLEET BAR */
+.fbar{background:var(--bg2);border-radius:7px;padding:11px 15px;margin-bottom:13px;display:flex;align-items:center;gap:15px;}
+.fb-track{flex:1;background:var(--bg4);border-radius:3px;height:8px;}
+.fb-fill{height:8px;border-radius:3px;background:linear-gradient(90deg,var(--red),#FF7A30);}
+
+/* MACHINE GRID */
+.mgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:13px;}
+.mc{background:var(--bg3);border-radius:7px;padding:9px 11px;border:1px solid var(--border);cursor:pointer;transition:all 0.15s;}
+.mc:hover,.mc.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+.mct{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.mcid{font-size:12px;font-weight:800;color:#8A9BB0;}
+.badge{font-size:8px;font-weight:700;padding:2px 5px;border-radius:10px;}
+.ba{background:rgba(245,168,0,0.15);color:var(--gold);}
+.bd{background:rgba(0,200,150,0.15);color:var(--green);}
+.bp{background:rgba(245,168,0,0.15);color:var(--gold);}
+.bh{background:rgba(255,75,75,0.15);color:var(--red);}
+.mpct{font-size:16px;font-weight:800;margin-bottom:3px;}
+.dots{display:flex;gap:2px;margin-bottom:3px;}
+.dot{width:9px;height:9px;border-radius:50%;}
+.dd{background:var(--green);}.da{background:var(--gold);}
+.dt{background:var(--bg4);border:1px solid #3a3d44;}.db{background:var(--red);}
+.pbar{background:var(--bg4);border-radius:2px;height:4px;margin-bottom:3px;}
+.pf{height:4px;border-radius:2px;}
+.mm{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);}
+.mb{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:2px;}
+
+/* PHASE GRID */
+.pgw{background:var(--bg2);border-radius:7px;padding:13px 15px;margin-bottom:13px;overflow-x:auto;}
+.pgc{border-radius:3px;height:25px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.pgi{height:100%;position:absolute;left:0;top:0;border-radius:3px;}
+.pgt{position:relative;z-index:1;font-size:9px;font-weight:700;}
+
+/* DRILLDOWN */
+.drill{background:var(--bg3);border-radius:7px;padding:13px 15px;margin-bottom:11px;border:1px solid var(--gold);}
+.dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.dt2{font-size:12px;font-weight:800;color:var(--gold);}
+.dcols{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:11px;}
+.dc{background:var(--bg2);border-radius:6px;padding:11px 13px;}
+.dct{font-size:9px;font-weight:700;color:var(--gold);margin-bottom:7px;letter-spacing:1px;}
+.phr{display:flex;align-items:center;gap:6px;margin-bottom:5px;}
+.phl{font-size:9px;color:var(--muted);width:82px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pht{flex:1;background:var(--bg4);border-radius:2px;height:8px;}
+.phf{height:8px;border-radius:2px;}
+.php{font-size:9px;font-weight:700;width:26px;text-align:right;}
+.mgr{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.mgl{font-size:8px;color:var(--muted);width:62px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mgt{flex:1;background:var(--bg4);border-radius:2px;height:8px;position:relative;overflow:hidden;}
+.mgp{position:absolute;top:0;height:8px;border-radius:2px;background:rgba(240,180,45,0.22);}
+.mga{position:absolute;top:0;height:8px;border-radius:2px;}
+
+/* TASK ENTRY */
+.tphase{background:var(--bg3);border-radius:7px;padding:11px 13px;margin-bottom:9px;}
+.tph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.tpn{font-size:11px;font-weight:800;color:var(--gold);}
+.tpm{font-size:10px;color:var(--muted);}
+.tchdr{display:grid;grid-template-columns:1fr 58px 58px 1fr 42px 70px;gap:5px;padding:0 0 5px;border-bottom:1px solid var(--border);margin-bottom:5px;}
+.tchdr span{font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;}
+.trow{border-radius:5px;padding:8px 10px;margin-bottom:4px;}
+.tgrid{display:grid;grid-template-columns:1fr 58px 58px 1fr 42px 70px;gap:5px;align-items:center;}
+.tid{font-size:8px;color:var(--gold);margin-bottom:2px;font-weight:700;}
+.tdesc{font-size:10px;color:var(--text);line-height:1.3;}
+.ti{width:100%;text-align:center;font-size:12px;font-weight:700;border-radius:4px;padding:4px 5px;border:1px solid;background:transparent;}
+.ti-p{border-color:rgba(245,168,0,0.4);color:var(--gold);}
+.ti-a{border-color:rgba(0,212,255,0.3);color:var(--gold);}
+.ti-done{border-color:rgba(0,200,150,0.4);color:var(--green);background:rgba(0,200,150,0.06);}
+.ti-over{border-color:rgba(255,75,75,0.4);color:var(--red);background:rgba(255,75,75,0.06);}
+.ti-ro{opacity:0.55;pointer-events:none;}
+.bwrap{background:var(--bg4);border-radius:3px;height:9px;position:relative;overflow:hidden;}
+.bplan{position:absolute;top:0;height:9px;border-radius:3px;}
+.bact{position:absolute;top:0;height:9px;border-radius:3px;}
+.vbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;text-align:center;white-space:nowrap;}
+.vb-done{background:rgba(0,200,150,0.15);color:var(--green);}
+.vb-ip{background:rgba(245,168,0,0.15);color:var(--gold);}
+.vb-ns{background:rgba(255,255,255,0.06);color:var(--muted);}
+.vb-over{background:rgba(255,75,75,0.15);color:var(--red);}
+
+/* CHARTS */
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px;}
+.cc{background:var(--bg3);border-radius:7px;padding:11px 13px;}
+.cct{font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.cct::before{content:"";width:3px;height:11px;background:var(--gold);border-radius:2px;}
+
+/* BUDGET */
+.bc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:13px;}
+.bc{background:var(--bg3);border-radius:7px;padding:12px 14px;}
+.bpm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.bpmc{background:var(--bg3);border-radius:6px;padding:10px 12px;}
+
+/* PRINT */
+.bsec-hdr{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;cursor:pointer;margin-bottom:5px;margin-top:8px;user-select:none;transition:background 0.15s;}
+.bsec-hdr:hover{background:var(--bg3);}
+.bsec-title{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;flex:1;}
+.bsec-badge{font-size:9px;color:var(--muted);background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:2px 8px;}
+.bsec-arrow{font-size:11px;color:var(--muted);min-width:12px;}
+.bsec-body{display:none;margin-bottom:5px;}
+.bsec-body.bsec-open{display:block;}
+.ev-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:12px 14px;margin-bottom:10px;}
+.ev-rig-id{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.ev-field{display:flex;flex-direction:column;gap:3px;}
+.ev-label{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.ev-input{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-size:11px;font-weight:700;width:100%;box-sizing:border-box;}
+.ev-input:focus{border-color:var(--cyan);outline:none;}
+.ev-input.editable{border-color:var(--gold);color:var(--gold);}
+.ev-results{background:var(--bg2);border-radius:5px;padding:9px 11px;display:flex;flex-direction:column;gap:5px;}
+.ev-result-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;}
+.ev-bar-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.ev-bar-label{font-size:9px;color:var(--muted);width:90px;}
+.ev-bar-track{flex:1;background:var(--bg4);border-radius:3px;height:9px;overflow:hidden;}
+.ev-bar-fill{height:9px;border-radius:3px;transition:width 0.4s;}
+.ev-bar-val{font-size:10px;font-weight:700;min-width:50px;text-align:right;}
+@media screen and (max-width:768px){
+  /* HEADER */
+  .hdr{padding:8px 10px;gap:6px;flex-wrap:wrap;}
+  .hdr-left{gap:8px;}
+  .hdr-left img{width:36px;height:36px;}
+  .hdr-main{font-size:12px !important;}
+  .hdr-sub{font-size:8px !important;}
+  #rbadge{font-size:8px;padding:2px 6px;}
+  #clock{display:none;}
+  #pushLiveBtn{font-size:8px;padding:3px 7px;}
+
+  /* NAV */
+  .nav{padding:0 6px;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .nav::-webkit-scrollbar{display:none;}
+  .nt{font-size:9px;padding:9px 10px;white-space:nowrap;}
+
+  /* PAGES */
+  .page{padding:10px 8px;}
+
+  /* KPI CARDS */
+  .krow{grid-template-columns:1fr 1fr;gap:8px;}
+  .kcard{padding:10px 12px;}
+  .kval{font-size:22px;}
+  .klbl{font-size:8px;}
+  .ksub{font-size:9px;}
+
+  /* FLEET BUDGET BAR */
+  .fbar{padding:10px 12px;gap:6px;}
+  .fbar-title{font-size:11px;}
+  .fbar-val{font-size:14px;}
+
+  /* MACHINE CARDS */
+  .mgrid{grid-template-columns:1fr 1fr;gap:8px;}
+  .mc{padding:10px 10px;}
+  .mc-id{font-size:12px;}
+  .mc-pct{font-size:26px;}
+  .mc-hrs{font-size:9px;}
+  .mc-bud{font-size:9px;}
+
+  /* CHARTS */
+  .cc{padding:10px;}
+  .charts-row{grid-template-columns:1fr;}
+
+  /* PHASE PROGRESS */
+  .pgc{font-size:9px;}
+
+  /* MACHINE DETAIL */
+  .dc{padding:10px;}
+  .dct{font-size:10px;}
+
+  /* TASK ENTRY */
+  .trow{grid-template-columns:1fr;}
+  #tphase-strip{grid-template-columns:repeat(3,1fr);}
+  #tpct-bar{gap:8px;padding:8px 10px;}
+
+  /* DATA ENTRY */
+  .egrid{grid-template-columns:1fr;}
+
+  /* SECTION HEADERS */
+  .sec{font-size:9px;padding:4px 0;}
+}
+
+@media screen and (max-width:400px){
+  .krow{grid-template-columns:1fr 1fr;}
+  .mgrid{grid-template-columns:1fr 1fr;}
+  .mc-pct{font-size:22px;}
+  #tphase-strip{grid-template-columns:repeat(2,1fr);}
+}
+
+@media print{
+  body{background:#fff !important;color:#000 !important;}
+  .hdr,.nav,.no-print,#login-screen{display:none !important;}
+  .page{display:block !important;padding:0 !important;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+.phdr{display:none;}
+@media print{.phdr{display:flex !important;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:2px solid #F5A800;margin-bottom:14px;}}
+
+/* TOAST */
+.toast{position:fixed;bottom:16px;right:16px;background:var(--green);color:#000;font-weight:700;padding:8px 16px;border-radius:5px;font-size:11px;display:none;z-index:9998;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" style="display: none;">
+  <div class="login-box">
+    <img src="data:image/png;base64,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" style="height:54px;width:auto;mix-blend-mode:screen;" alt="EMS Mining">
+    <div class="login-title">EMS MINING</div>
+    <div class="login-sub">Drill Rig Fleet Dashboard · Please sign in</div>
+    <div class="lf"><label>USERNAME</label><input type="text" id="lu" placeholder="Enter username" autocomplete="off" onkeydown="if(event.key==='Enter')login()"></div>
+    <div class="lf"><label>PASSWORD</label><div style="position:relative;">
+      <input type="password" id="lp" placeholder="Enter password" autocomplete="new-password" onkeydown="if(event.key==='Enter')login()" style="width:100%;padding-right:50px;">
+      <button type="button" onclick="var x=document.getElementById('lp');x.type=x.type==='password'?'text':'password';this.textContent=x.type==='password'?'SHOW':'HIDE'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gold);font-size:10px;font-weight:700;cursor:pointer;">SHOW</button>
+    </div></div>
+    <div class="lerr" id="lerr">Incorrect username or password.</div>
+    <button class="btn" style="width:100%;margin-top:8px;padding:10px;" onclick="login()">SIGN IN</button>
+    <div style="margin-top:14px;font-size:10px;color:var(--muted);line-height:1.8;">
+      Contact your system administrator for login credentials.
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display: block;">
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:13px;">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABfAKgDASIAAhEBAxEB/8QAHAABAAICAwEAAAAAAAAAAAAAAAYHBQgBAwQC/8QASBAAAQMDAQQECQgHBgcAAAAAAQIDBAAFEQYHEiExE0FRgQgUFRhhcZGx0SIyVVaTlKHSFhdSVGJywSMkNUJT4TNDgoOSosL/xAAbAQEAAgMBAQAAAAAAAAAAAAAAAQQDBQYCB//EADQRAAEEAQECDAMJAAAAAAAAAAABAgMEEQUSMQYTFBUhUVNxgaHB8FSR0RYiI0FScrHS4v/aAAwDAQACEQMRAD8A0ypSlAKUpQClKUApSlAKUpQClKUApVibMNkGqdoFmk3e0uQY0OO/4v0kpxSd9e7vEJwk5wCM+upYPBl11n/FLB9u5+StdY1anWescsiI7qUtRUp5W7TGqqFH1a/gtaMZ1ftPZM+MH7XbWlSZSVDKVf5UJPrJz3Gq71VY52mtRTrFckoEuE8WnNw5SSOsHsI41uH4H+lPIOzHy0+3uy7270+SOIZT8lA7+Ku8VfY5r2o5q5RSs5Faqou81J2j6ed0prq86fdBHiUpaEE9aM5Qe9JFR+tifDf063E1ZZ9SslA8oxiw8nPEraxhWP5VAd1a7V6IFKUoBSlKAUpSgFKUoBSlKAUpSgFKUoBX02hTi0oQkqUogJA5k181a3gq6OGsNsNsRIb34Fr/AL/KyMghBG4nvXu/jQG5GyfRKNIbH7Rp3owmW0wJMk9ZfX8pfszjur1VNiRklRAHMk8hVV6J1ba9ZW+Zc7TwYYnPRSkniNxRAPenB764ThnSyjLTf2r/ACnqdHoNjpdCvenqUX4SOzuTfNrmmX7e3w1ApMN5QHzVo5qP/b4/9JraG2wo9ut0a3Q0BEeK0llpIGMJSAB7q8UaJHkTGZDzKHFxSVsqUnJQojBI7DjI76+9U3iPp/TVyvkogMwIq31Z690ZA7zgd9b/AINPkfpsayfllE7kXoNZqzWttuRvtTTzwttQr1Lte8iQ19I1aW0w205wC6r5S/RzIHdVb/oTqf6LX9on41ibrcZVyvEq6yXCqTJfU+4r+NSion2mry07PTdLHEnJOS62N/0KHA/jW9NeUdeLVcLRISxcYymHFJ3kgkHI7q8VWrtft3T2Zi4oTlcZzdUf4Ff749tVVUAUpSgFKmux3QT20TVLllbnpgJbjLkKeU3vgYIAGMjnmrc81p765M/cj+atXb1qlTk4qZ+Hdy+iFyChYnbtxtynga3UrZHzWnvrkz9yP5qea099cmfuR/NVX7TaZ2vkv0M3NNv9Hmn1NbqVsgvwXHUNqWrWTOEpKj/cjyA/mrXudb3ozDcrBXFeWtLLoHBe6cH1VfpanVvbXJ3Zxv6FTf3oVrFSavjjExk8dKUq+VhSuUgqUEpBJJwAOup1aNnE2VBbkTZiYjixnouj3ikenjz9FAQStifBm2n7PNluj7lJvCp8u/XJ8b7MWNno2UD5CStRA4kqPsqidQ2o2u+vWtp0yVtqSkFKcFRIBxjvqR2bZ1dJTaXZ77cJJ47hG8vvHIUBf+uPCwstx0vdbbYNOXWPNlRXGGJL7rYS0pQxvEAnOAap3YLtXTs4Xc2J0B+4QZoQsNtOBJQ4nhvce0HHcKM7M7YB/a3GWs/wpSn419ObNLSR8ifMSfSEn+lV7dSK3EsMqZaplhmfA9HsXCoXPaPCj0WAES7De2MnKlDo1gf+2ajvhDbbtLas2aGxaVlzFSZslAlIeYLZQ0n5XPkcqwPbVVzdmaENqcYvASlIJPStcgPUartYCVqSlW8AcA9tZIYWQRtjYmERMIeJHrI5Xu3qfNWdscuPSQpdrWri0oOtj0Hgfx99VjWd0HchbNURH1HDTiuic/lVw9+DWQ8ly3mEi42mVBXyfaKB6D1H24qgHm1tPLacGFoUUqHYRWxXI1TO0y3eIaqfWhO61JAeT2ZPP8c1KgjFKUqAbE+BNBKrzqS5FPBqM0wD2FSif/mpJ4Rm1vU2h9Xw7Np12GhKoSX3w8wHDvKUQME8uAru8DCB0GgLtPKcKlXHcB7UoQP6qNWXfb9s7aubrF8ummkz2sIdRLU0XUdgO9xHOvmeoWWc9SPfFxiJ0Y8ETqU62rE7kDGtfsqvTnxNYPOM2k/vFr+5D4084zaT+8Wv7kPjWyP6Q7JfpTR3tY+FcjUWyQHJumjsDjzY+FZ+cafwHl/kxcln+J9/M1pleENtHkRnY65NsCHUKQophgHBGDg5rtsVmhXfZzDt61JIW2VpWOJbcyTn286q7UUpE6/3Ga2hCEPynHUpQMJAUokAY6uNSLZpqTyVP8ny3MQpKuBJ4Nr6j6jyNd3UqQVm/hMRud+DnZp5JV++5VwRe6QZFtnvQpSNx1pW6odvpHorzpBUoJSCSTgAddW7tK035WgeUIjeZsdPEAcXUdnpI6q8mz/SCLc2i73ZCfGcbzbauTI/aPp91WsGE50Bo9FubTdrshPjWN5ttfJkdp9PuqaQpLE2OiTGcDjLnzVjkRnGarDaDrFVwUu12twpiA4ddHN09g/h99WDZECBpeIkjd6GICfQd3JqQQvRrLVz2i3W4uAK6Ba1IB6jvboPcKzu0O+XazRY6rZHCg4T0jxRvBGOQx6arbTN/fst8NxSjpEuZDzecbySc+2rRt2tNOzUDM5MdRHFD6d3HfyoCsX9XalcUSu7SEnsThPuFG9X6kbPybu+fXg+8VbfjWnJY4v2t7PaUGutdj01MP8Ah9udJ/YAz+FAVlJ1zfpNufgyHGVoebKFLDeFAHnxFRirX1LoC1vQXXbUhUWShJUlO8SheOrjyqqSCCQRgioBxXIJBBBwRyrilAXzpS4C6aehzSQVqbCXP5hwNR3a9bvGLIzcEJyuK5hX8qv98V4djlyBbmWpxXEEPN5Pcoe6p1d4bdxtcmC5gpfaUjnyOOB9tSDXylfb7S2X1suDC0KKVDsIpUA3a8GC3mBsYs5WMKlLekE9oUsgfgKpbaNsY2lai15e72xaI5ZmzXHWiZjYO4VfJ4E9mKyGivCJhab0jarAnSjrwgRUMFzxsDfI5nG7wyc1l/Oki/U9374Py18/iq6xUuTWIIkXbVd6puznrQ6Z81CaBkUj8bKJuz1dxXPm/bT/AKHi/fW/jTzftp/0PF++t/GrG86SL9T3fvg/LTzpIv1Pd++D8tX+WcIuxb5f2K3EaX2i+/Ap/WmybW2kLEu9X23sR4SHEtlSZKFneVyGAc1BKuPbTtrTtB0qxY2LGu3JRKS+tZkb+8AkgDGB1nNU5XQ6ZJbkg2rjUa/O5Or5qay22BsmIFy0s/QutYXktMK8yuheYG6h1YJC09WT2isRr7WflMKttqWpMP8A5rmMF30ehPvqD0rYFU7oLXTzWGP9RxKPacVfN9YkO2KZFiJCn1sKbbGccSMc6ouzSm4N1izHWi6hlwLKAcb2DmrB/WcwTk2lz7UfCpBHP0B1L+6NfbJ+NP0B1L+6NfbJ+NSP9Z0b6Jd+1Hwrn9Z0X6Je+1HwoCN/oDqX90a+2T8a7oOgdSKkJSsNRU54udMDjuHGs/8ArNifRT/2o+FeeVtOO4RFtICuouO5A7gKAmk6SzYdOFyVIU4mOxuBaz8pxWMDvJqh1qK1qWeajk1kb/fble3w7PfKkp+Y2nghPqFYyoApSlAfSFrQcoUpJ7QcV9+MSP8AXd/8zXVSgOSSSSSSTzJpXFKAUpSgFKUoBWeZsHS6MevwcX0jb+50eOBRwBV7TWBqat3WLZoFniSmFSYr0BxUhlJxvdIrI9hSKAxEyweJaSYvEpxSH5LwSyzj/JgnePrxWBqU6tnPSrBalPKHSSVvSVAckgq3UpHoATUWoDJ2G3NTxOcfcW23FirfJSOZGAB3k1jKz9oPi+jry+DhT7jMcerJUfdWAoD2WSF5Ru8WDvFPTupQSOoE8TWbXphDWq3bW7IV4ohpchL6cZU0ElQI6vRXn0JuovipSuUWM68PWEkD8SKzNmubMjRU91/JnwY6o7a+1txQ4H1HNAQeu2IyqRKaYT85xYQPWTiuqszolpL2qYAX8xDvSK9SRn+lAeS/w2bfepcKO4p1phwoC1czjn+NeGu+e8ZM5+Qrm64pZ7zmupCStaUjmTgUBn7zptULTluu7TinPGEjp0Ef8MninuIrw6ltzVquhhNOLc3G0FZV1KKQSO7NTBubGOtXbBLClQHmWYhA6lISClQ78+2odqiT43qK4SP2n1Y9QOB7qAxtZ+NarXFt8SVe5UpszAVMtx0AlKM431E9WeqsBVhMxVyE23UEeTGRbI0NDEjpWd8o3fnAJIOSeojtoCEXeMzDuL0ePKRKZQr5DqOShzFK5vcpuddpUtlpLLTrpUhAAASnqGB6KUB//9k=" style="height:46px;width:auto;mix-blend-mode:screen;" alt="EMS Mining">
+    <div>
+      <div class="hdr-main">SANDVIK D25KS REBUILD TRACKER</div>
+      <div class="hdr-sub">EMS MINING · FLEET REBUILD MANAGEMENT SYSTEM</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:11px;">
+    <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
+    <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">28 Jun 2026<br>18:59</div>
+    <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
+    <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file">⬇ BACKUP</button>
+    <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file">⬆ RESTORE</button>
+    <input type="file" id="restore-input" accept=".json" style="display:none;" onchange="restoreData(event)">
+    <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="logout()">SIGN OUT</button>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nt active" onclick="sp('fleet',this)">FLEET OVERVIEW / BUDGET</div>
+  <div class="nt" onclick="sp('phases',this)">PHASE PROGRESS</div>
+  <div class="nt" onclick="sp('machine',this)">MACHINE DETAIL</div>
+
+  <div class="nt ao" id="tab-tasks" onclick="sp('tasks',this)" style="display: block;">✎ TASK ENTRY</div>
+  <div class="nt" id="tab-labour" onclick="sp('labour',this)">▶ EARNED VALUE (EV) &amp; DAYS</div>
+  
+  <div class="nt" onclick="showPrint()">⎙ PRINT</div>
+</div>
+
+<!-- PAGE 1: FLEET -->
+<div id="page-fleet" class="page active">
+  <div class="krow" id="fleet-kpis">
+    <div class="kpi r"><div class="kl">ACTUAL</div><div class="kv r">R 6.49M</div><div class="ks">7.2% of R90M fleet budget</div></div>
+    <div class="kpi gr"><div class="kl">BUDGET REMAINING</div><div class="kv gr">R 83.51M</div><div class="ks">92.8% remaining</div></div>
+    <div class="kpi g"><div class="kl">PLANNED HOURS</div><div class="kv g">6,645</div><div class="ks">Total planned — all 15 rigs</div></div>
+    <div class="kpi c"><div class="kl">ACTUAL HOURS LOGGED</div><div class="kv c">963</div><div class="ks">14.5% · 4 active · 0 complete</div></div></div>
+  <div class="fbar" id="fleet-bud">
+    <div style="min-width:110px;"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;">FLEET BUDGET</div><div style="font-size:18px;font-weight:800;color:var(--gold);">R 90.00M</div></div>
+    <div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>Used: <strong style="color:var(--red);">R 6.49M</strong></span><span>Remaining: <strong style="color:var(--green);">R 83.51M</strong></span><strong style="color:var(--gold);">7.2% used</strong></div>
+    <div class="fb-track"><div class="fb-fill" style="width:7.2%;"></div></div></div></div>
+
+  <div class="sec" style="margin-top:4px;">REBUILD STATUS SUMMARY</div>
+  <div class="cc" style="padding:0;overflow:hidden;margin-bottom:13px;" id="rebuild-summary-wrap">
+    <div id="rebuild-summary">
+  <div style="padding:9px 13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg3);">
+    <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;">D25KS REBUILD UPDATE — JUNE 2026</span>
+    <span style="font-size:10px;color:var(--muted);">Funds remaining: <span style="color:var(--green);font-weight:700;">R 17&nbsp;512&nbsp;923</span></span>
+  </div>
+  <div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr style="background:var(--bg3);border-bottom:1px solid var(--border);">
+      <th style="padding:7px 12px;text-align:left;font-size:9px;font-weight:700;color:var(--muted);"></th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>HOURS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">HOURS<br>USED</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>DAYS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">DAYS<br>USED</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">DAYS<br>REMAINING</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">LABOUR %<br>USED | REMAINING</th>
+      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);">BUDGETED COST<br>OF REBUILD</th>
+      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);"><span style="color:var(--red)">(R) ACTUAL</span><br><span style="color:var(--green)">(R) REMAINING</span><br><span style="font-weight:400;font-size:8px;">% used · % remaining</span></th>
+    </tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK004</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">443</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">198</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">22</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--green);">27</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">45%</span>
+        <span style="color:var(--muted);font-size:10px;"> | </span>
+        <span style="color:var(--green);">55%</span>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--red);font-size:9px;font-weight:700;">(R) ACTUAL</span>
+          <span style="color:var(--red);font-weight:700;font-size:13px;">R 672&nbsp;600</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--green);font-size:9px;font-weight:700;">(R) REMAINING</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 5&nbsp;327&nbsp;400</span>
+        </div>
+        <div style="font-size:9px;color:var(--green);font-weight:700;text-align:right;">11.2% used · 88.8% rem</div>
+      </td>
+    </tr><tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK007</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">443</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">189</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">21</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--green);">28</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">43%</span>
+        <span style="color:var(--muted);font-size:10px;"> | </span>
+        <span style="color:var(--green);">57%</span>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--red);font-size:9px;font-weight:700;">(R) ACTUAL</span>
+          <span style="color:var(--red);font-weight:700;font-size:13px;">R 4&nbsp;313&nbsp;307</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--green);font-size:9px;font-weight:700;">(R) REMAINING</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 1&nbsp;686&nbsp;693</span>
+        </div>
+        <div style="font-size:9px;color:var(--gold);font-weight:700;text-align:right;">71.9% used · 28.1% rem</div>
+      </td>
+    </tr><tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK013</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">443</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">387</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">43</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--red);">6</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">88%</span>
+        <span style="color:var(--muted);font-size:10px;"> | </span>
+        <span style="color:var(--red);">12%</span>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--red);font-size:9px;font-weight:700;">(R) ACTUAL</span>
+          <span style="color:var(--red);font-weight:700;font-size:13px;">R 1&nbsp;275&nbsp;700</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--green);font-size:9px;font-weight:700;">(R) REMAINING</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 4&nbsp;724&nbsp;300</span>
+        </div>
+        <div style="font-size:9px;color:var(--green);font-weight:700;text-align:right;">21.3% used · 78.7% rem</div>
+      </td>
+    </tr><tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK014</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">443</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">189</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">21</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--green);">28</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">43%</span>
+        <span style="color:var(--muted);font-size:10px;"> | </span>
+        <span style="color:var(--green);">57%</span>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--red);font-size:9px;font-weight:700;">(R) ACTUAL</span>
+          <span style="color:var(--red);font-weight:700;font-size:13px;">R 225&nbsp;470</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--green);font-size:9px;font-weight:700;">(R) REMAINING</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 5&nbsp;774&nbsp;530</span>
+        </div>
+        <div style="font-size:9px;color:var(--green);font-weight:700;text-align:right;">3.8% used · 96.2% rem</div>
+      </td>
+    </tr>
+      <tr style="background:var(--bg2);border-top:2px solid var(--border);">
+        <td colspan="5" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL FUNDS REQUIRED TO COMPLETE</td>
+        <td style="padding:9px 12px;text-align:right;font-size:11px;">R 24&nbsp;000&nbsp;000</td>
+        <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:var(--red);">R 17&nbsp;512&nbsp;923</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table></div></div>
+  </div>
+
+  <div class="crow" style="margin-bottom:13px;">
+    <div class="cc">
+      <div class="cct">LABOUR % USED vs REMAINING — PER RIG</div>
+      <div id="ch-labour-pct" style="padding:8px 4px;">
+      <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Consumed</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Remaining to complete</span>
+      </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK004</span>
+            <span style="font-size:10px;color:var(--muted);">45% used · 55% remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:45%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">45%</span>
+            </div>
+            <div style="width:55%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">55%</span>
+            </div>
+          </div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK007</span>
+            <span style="font-size:10px;color:var(--muted);">43% used · 57% remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:43%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">43%</span>
+            </div>
+            <div style="width:57%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">57%</span>
+            </div>
+          </div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK013</span>
+            <span style="font-size:10px;color:var(--muted);">88% used · 12% remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:88%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">88%</span>
+            </div>
+            <div style="width:12%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">12%</span>
+            </div>
+          </div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK014</span>
+            <span style="font-size:10px;color:var(--muted);">43% used · 57% remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:43%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">43%</span>
+            </div>
+            <div style="width:57%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">57%</span>
+            </div>
+          </div>
+        </div></div>
+    </div>
+    <div class="cc">
+      <div class="cct">BUDGET % USED vs REMAINING — PER RIG</div>
+      <div id="ch-rebuild-pct" style="padding:8px 4px;">
+      <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Budget remaining</span>
+      </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK004</span>
+            <span style="font-size:10px;color:var(--muted);">R 435&nbsp;000 used · R 5&nbsp;565&nbsp;000 remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:7.3%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;"></span>
+            </div>
+            <div style="width:92.7%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">92.7%</span>
+            </div>
+          </div>
+        </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK007</span>
+            <span style="font-size:10px;color:var(--muted);">R 4&nbsp;313&nbsp;307 used · R 1&nbsp;686&nbsp;693 remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:71.9%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">71.9%</span>
+            </div>
+            <div style="width:28.1%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">28.1%</span>
+            </div>
+          </div>
+        </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK013</span>
+            <span style="font-size:10px;color:var(--muted);">R 850&nbsp;000 used · R 5&nbsp;150&nbsp;000 remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:14.2%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">14.2%</span>
+            </div>
+            <div style="width:85.8%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">85.8%</span>
+            </div>
+          </div>
+        </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK014</span>
+            <span style="font-size:10px;color:var(--muted);">R 225&nbsp;470 used · R 5&nbsp;774&nbsp;530 remaining</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:3.8%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;"></span>
+            </div>
+            <div style="width:96.2%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
+              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">96.2%</span>
+            </div>
+          </div>
+        </div></div>
+    </div>
+  </div>
+
+  <div class="sec" style="margin-top:4px;">BUDGET PER MACHINE</div>
+  <div class="bpm" id="bpm-fleet"><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK003</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK004</span><span class="badge ba">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:11.2%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 672&nbsp;600</span><span style="color:var(--gold);font-weight:700;">11.2%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">198 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:44.7%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 5&nbsp;327&nbsp;400 · 245h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK005</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK006</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK007</span><span class="badge ba">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:71.9%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 4&nbsp;313&nbsp;307</span><span style="color:var(--gold);font-weight:700;">71.9%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">189 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:42.7%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 1&nbsp;686&nbsp;693 · 254h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK008</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK009</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK010</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK011</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK012</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK013</span><span class="badge ba">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:21.3%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 1&nbsp;275&nbsp;700</span><span style="color:var(--gold);font-weight:700;">21.3%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">387 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:87.4%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 4&nbsp;724&nbsp;300 · 56h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK014</span><span class="badge ba">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:3.8%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 225&nbsp;470</span><span style="color:var(--gold);font-weight:700;">3.8%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">189 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:42.7%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 5&nbsp;774&nbsp;530 · 254h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK015</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK016</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">DK017</span><span class="badge bp">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 443h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: R 6&nbsp;000&nbsp;000 · 443h left</div>
+    </div></div>
+
+  <div class="sec" style="margin-top:4px;">BUDGET EFFICIENCY — SPEND vs BUILD PROGRESS</div>
+  <div class="cc" id="efficiency-section-fleet">
+    <div style="font-size:9px;color:var(--muted);margin-bottom:11px;">Compares budget consumed against build completion. Positive gap = getting more build per rand spent.</div>
+    <div style="display:flex;gap:14px;margin-bottom:10px;font-size:10px;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block;"></span>Actual %</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build complete %</span>
+    </div>
+    <div id="efficiency-rows-fleet"><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK004</span>
+        <span style="font-size:9px;font-weight:700;color:var(--green);">✓ Build ahead of spend by 33.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Actual</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:11.2%;height:11px;background:var(--red);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--red);min-width:42px;text-align:right;">11.2%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 672&nbsp;600</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build complete</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:44.7%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">44.7%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">198/443h</span>
+      </div>
+    </div><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK007</span>
+        <span style="font-size:9px;font-weight:700;color:var(--red);">⚠ Spend ahead of build by 29.2% — review</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Actual</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:71.9%;height:11px;background:var(--red);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--red);min-width:42px;text-align:right;">71.9%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 4&nbsp;313&nbsp;307</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build complete</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:42.7%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">42.7%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">189/443h</span>
+      </div>
+    </div><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK013</span>
+        <span style="font-size:9px;font-weight:700;color:var(--green);">✓ Build ahead of spend by 66.1%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Actual</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:21.3%;height:11px;background:var(--red);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--red);min-width:42px;text-align:right;">21.3%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 1&nbsp;275&nbsp;700</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build complete</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:87.4%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">87.4%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">387/443h</span>
+      </div>
+    </div><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK014</span>
+        <span style="font-size:9px;font-weight:700;color:var(--green);">✓ Build ahead of spend by 38.9%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Actual</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:3.8%;height:11px;background:var(--red);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--red);min-width:42px;text-align:right;">3.8%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 225&nbsp;470</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build complete</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:42.7%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">42.7%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">189/443h</span>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="crow">
+    <div class="cc"><div class="cct">MACHINE BUILD PROGRESS</div><div style="position:relative;height:280px;"><canvas id="ch-m" width="613" height="280" style="display: block; box-sizing: border-box; height: 280px; width: 613px;"></canvas></div></div>
+    <div class="cc"><div class="cct">FLEET STATUS</div><div style="position:relative;height:180px;"><canvas id="ch-s" width="613" height="180" style="display: block; box-sizing: border-box; height: 180px; width: 613px;"></canvas></div><div id="sleg" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:10px;"><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#F5A800;border-radius:2px;display:inline-block;"></span>Active: 4</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#00C896;border-radius:2px;display:inline-block;"></span>Complete: 0</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#5A9BD4;border-radius:2px;display:inline-block;"></span>Planned: 11</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#FF4B4B;border-radius:2px;display:inline-block;"></span>On Hold: 0</span></div></div>
+  </div>
+</div>
+
+<!-- PAGE 2: PHASES -->
+<div id="page-phases" class="page">
+  <div class="sec">REBUILD PHASE PROGRESS — ALL MACHINES</div>
+  <div style="font-size:10px;color:var(--muted);margin-bottom:9px;">Each cell = % complete for that phase. Click a machine to view full detail.</div>
+  <div class="pgw"><div id="pgc"></div></div>
+  <div style="display:flex;gap:14px;margin-bottom:11px;flex-wrap:wrap;align-items:center;">
+    <span style="font-size:9px;color:var(--muted);font-weight:700;">LEGEND:</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;"><span style="width:13px;height:13px;background:var(--green);border-radius:2px;display:inline-block;"></span>100%</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;"><span style="width:13px;height:13px;background:var(--gold);border-radius:2px;display:inline-block;"></span>50–99%</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;"><span style="width:13px;height:13px;background:var(--red);opacity:0.6;border-radius:2px;display:inline-block;"></span>1–49%</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;"><span style="width:13px;height:13px;background:var(--bg4);border-radius:2px;border:1px solid #2a3555;display:inline-block;"></span>0%</span>
+  </div>
+  <div class="crow">
+
+    <div class="cc"><div class="cct">PLANNED vs DAYS USED</div><div style="position:relative;height:300px;"><canvas id="ch-pd"></canvas></div></div>
+  </div>
+</div>
+
+<!-- PAGE 3: MACHINE DETAIL -->
+<div id="page-machine" class="page">
+  <div style="display:flex;gap:10px;margin-bottom:11px;align-items:center;flex-wrap:wrap;">
+    <span style="font-size:11px;color:var(--muted);">Select machine:</span>
+    <select id="dsel" onchange="loadDrill()"></select>
+    <button class="btn dark" onclick="printMachine()" style="font-size:10px;padding:5px 11px;">⎙ PRINT</button>
+  </div>
+  <div id="dpanel"></div>
+</div>
+
+<!-- PAGE 4: BUDGET -->
+<div id="page-budget" class="page">
+
+  <!-- S1: FLEET BUDGET OVERVIEW - always open -->
+  <div class="bsec-hdr bsec-open" onclick="bToggle(this)" id="bsec1-hdr">
+    <span class="bsec-title">■ FLEET BUDGET OVERVIEW</span>
+    <span class="bsec-arrow">▼</span>
+  </div>
+  <div class="bsec-body bsec-open" id="bsec1-body">
+    <div class="bc3" id="bov"></div>
+  </div>
+
+  <!-- S2: BUDGET PER MACHINE - always open -->
+  <div class="bsec-hdr bsec-open" onclick="bToggle(this)" id="bsec2-hdr">
+    <span class="bsec-title">■ BUDGET PER MACHINE</span>
+    <span class="bsec-badge" id="bsec2-badge"></span>
+    <span class="bsec-arrow">▼</span>
+  </div>
+  <div class="bsec-body bsec-open" id="bsec2-body">
+    <div class="bpm" id="bpm"></div>
+  </div>
+
+  <!-- S3: BUDGET EFFICIENCY - open by default -->
+  <div class="bsec-hdr bsec-open" onclick="bToggle(this)" id="bsec3-hdr">
+    <span class="bsec-title">■ BUDGET EFFICIENCY — SPEND vs BUILD PROGRESS</span>
+    <span class="bsec-arrow">▼</span>
+  </div>
+  <div class="bsec-body bsec-open" id="bsec3-body">
+    <div class="cc" id="efficiency-section">
+      <div style="font-size:9px;color:var(--muted);margin-bottom:11px;">Compares budget consumed against build completion. Positive gap = getting more build per rand. Negative = spending faster than building.</div>
+      <div style="display:flex;gap:14px;margin-bottom:10px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block;"></span>Actual %</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build complete %</span>
+      </div>
+      <div id="efficiency-rows"></div>
+    </div>
+  </div>
+
+
+
+  <!-- S5: CHARTS - collapsed by default -->
+  <div class="bsec-hdr" onclick="bToggle(this)" id="bsec5-hdr">
+    <span class="bsec-title">■ BUDGET &amp; HOURS CHARTS</span>
+    <span class="bsec-badge">Click to expand</span>
+    <span class="bsec-arrow">▶</span>
+  </div>
+  <div class="bsec-body" id="bsec5-body">
+    <div class="cc"><div class="cct">ACTUAL vs REMAINING — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-bf"></canvas></div></div>
+    <div class="cc" style="margin-top:10px;"><div class="cct">PLANNED HOURS vs ACTUAL HOURS — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-hf"></canvas></div></div>
+  </div>
+
+</div>
+
+<!-- PAGE 5: TASK ENTRY (admin) -->
+<div id="page-tasks" class="page">
+  <div style="background:rgba(0,212,255,0.07);border:1px solid var(--gold);border-radius:6px;padding:8px 13px;margin-bottom:13px;font-size:11px;color:var(--gold);">
+    ✎ &nbsp;Data Capturer — Select machine, enter <span style="color:var(--gold);font-weight:700;">Planned Hours</span> per task (set once by admin), then update <span style="color:var(--gold);font-weight:700;">Actual Hours</span> as work is completed. Phase % and dashboard update automatically.
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:13px;align-items:center;flex-wrap:wrap;">
+    <span style="font-size:11px;color:var(--muted);">Machine:</span>
+    <select id="tsel" onchange="loadTasks()" style="font-size:11px;"></select>
+    <button class="btn green" onclick="saveTasks()">SAVE &amp; UPDATE DASHBOARD</button>
+    <button class="btn gold" onclick="showAddPhase()">+ ADD PHASE</button>
+    <span style="font-size:10px;color:var(--muted);" id="tsaved"></span>
+  </div>
+  <div id="tpct-bar" style="display:flex;align-items:center;gap:16px;background:var(--bg2);border-radius:6px;padding:9px 14px;margin-bottom:9px;flex-wrap:wrap;"></div>
+  <div id="tphase-strip" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:13px;"></div>
+  <div id="tbody"></div>
+
+</div>
+
+<!-- ADD PHASE MODAL -->
+<div id="modal-phase" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:8000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px 28px;width:480px;box-shadow:0 8px 32px rgba(0,0,0,0.5);max-height:85vh;overflow-y:auto;">
+    <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:4px;letter-spacing:1px;">+ ADD NEW PHASE</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">Adding a phase here adds it to the global task template — it will appear for ALL machines in Task Entry. Give it a unique phase name and add at least one task.</div>
+    <div style="font-size:9px;color:var(--red);margin-bottom:14px;font-weight:700;">⚠ This cannot be undone without a full data reset. Make sure the phase name is final before confirming.</div>
+    <div style="display:grid;gap:10px;">
+      <div>
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">PHASE NAME (e.g. Electrical, Paint, NDT Inspection)</div>
+        <input type="text" id="np-name" placeholder="Electrical" style="width:100%;font-size:13px;font-weight:700;padding:8px 10px;">
+      </div>
+      <div>
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">PHASE CODE PREFIX (2–4 letters, e.g. EL, NDT, PT) — used for task IDs</div>
+        <input type="text" id="np-prefix" placeholder="EL" maxlength="4" style="width:100%;font-size:13px;font-weight:700;padding:8px 10px;text-transform:uppercase;">
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;">TASKS IN THIS PHASE</div>
+        <button class="btn dark" onclick="addPhaseTaskRow()" style="font-size:9px;padding:4px 10px;">+ ADD TASK ROW</button>
+      </div>
+      <div id="np-tasks">
+        <!-- rows injected by addPhaseTaskRow() -->
+      </div>
+    </div>
+
+    <div id="np-err" style="font-size:10px;color:var(--red);min-height:16px;margin-top:8px;"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn green" onclick="confirmAddPhase()" style="flex:1;">CONFIRM — ADD PHASE</button>
+      <button class="btn dark" onclick="closeAddPhase()" style="flex:0 0 auto;">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: DATA ENTRY (admin) -->
+<div id="page-edit" class="page">
+  <div style="background:rgba(245,168,0,0.07);border:1px solid var(--gold);border-radius:6px;padding:8px 13px;margin-bottom:13px;font-size:11px;color:var(--gold);">
+    ✎ &nbsp;Data Capturer — Edit machine status, budget and notes. For task-level hours use the TASK ENTRY tab.
+  </div>
+  <div id="egrid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;"></div>
+  <div style="display:flex;gap:10px;align-items:center;margin-top:13px;flex-wrap:wrap;">
+    <button class="btn ao" onclick="saveEdit()" style="display: block;">SAVE DATA</button>
+    <button class="btn green ao" onclick="showAddMachine()" style="display: block;">+ ADD MACHINE</button>
+    <button class="btn gold" onclick="exportData()">EXPORT JSON</button>
+    <button class="btn dark" onclick="resetAll()">RESET TO DEFAULT</button>
+  </div>
+</div>
+
+<!-- ADD MACHINE MODAL -->
+<div id="modal-machine" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:8000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px 28px;width:400px;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+    <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:4px;letter-spacing:1px;">+ ADD NEW MACHINE</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:18px;">The new machine will use the standard task template. You can edit planned hours in Task Entry afterwards.</div>
+    <div style="display:grid;gap:10px;">
+      <div>
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">MACHINE ID (e.g. DK018)</div>
+        <input type="text" id="nm-id" placeholder="DK018" style="width:100%;font-size:13px;font-weight:700;padding:8px 10px;">
+      </div>
+      <div>
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">MACHINE NAME / DESCRIPTION</div>
+        <input type="text" id="nm-name" placeholder="Sandvik D25KS — Unit 18" style="width:100%;font-size:12px;padding:8px 10px;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">BUDGET (R)</div>
+          <input type="number" id="nm-budget" value="6000000" step="100000" style="width:100%;font-size:12px;padding:8px 10px;">
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">TOTAL PLANNED HRS</div>
+          <input type="number" id="nm-hrs" value="668" step="1" style="width:100%;font-size:12px;padding:8px 10px;">
+        </div>
+      </div>
+      <div>
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">STATUS</div>
+        <select id="nm-status" style="width:100%;font-size:12px;padding:8px 10px;">
+          <option value="planned">Planned</option>
+          <option value="active">Active</option>
+          <option value="hold">On Hold</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">NOTES (optional)</div>
+        <input type="text" id="nm-notes" placeholder="e.g. Scheduled Q3 2026" style="width:100%;font-size:12px;padding:8px 10px;">
+      </div>
+    </div>
+    <div id="nm-err" style="font-size:10px;color:var(--red);min-height:16px;margin-top:8px;"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn green" onclick="confirmAddMachine()" style="flex:1;">CONFIRM — ADD MACHINE</button>
+      <button class="btn dark" onclick="closeAddMachine()" style="flex:0 0 auto;">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- PAGE 7: LABOUR COST + EV TRACKER -->
+<div id="page-labour" class="page">
+  <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid var(--border);">■ EARNED VALUE (EV) &amp; DAYS TRACKER</div>
+  <div style="font-size:9px;color:var(--muted);margin-bottom:10px;">Labour budget per rig = R550,000 (editable). Earned value = Build % × budget. Remaining = what is still to be consumed as build progresses. Build % comes from Task Entry actual hrs.</div>
+  <div id="ev-rows-lc"></div>
+  <div style="margin-top:16px;">
+    <button onclick="showAddMachine()" style="width:100%;padding:10px;background:transparent;border:2px dashed var(--gold);color:var(--gold);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;">+ ADD MACHINE TO BUILD</button>
+  </div>
+  <div id="add-machine-form" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;">
+    <div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:10px;letter-spacing:0.5px;">NEW MACHINE</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;">
+      <div>
+        <div style="font-size:8.5px;color:var(--muted);font-weight:700;margin-bottom:3px;">RIG ID (e.g. DK018)</div>
+        <input id="new-rig-id" type="text" placeholder="DK018" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:6px 9px;color:var(--text);font-size:12px;">
+      </div>
+      <div>
+        <div style="font-size:8.5px;color:var(--muted);font-weight:700;margin-bottom:3px;">DESCRIPTION</div>
+        <input id="new-rig-desc" type="text" placeholder="e.g. Sandvik D25KS" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:6px 9px;color:var(--text);font-size:12px;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="addMachine()" style="flex:1;padding:7px;background:var(--gold);color:#000;border:none;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">✓ ADD RIG</button>
+      <button onclick="document.getElementById('add-machine-form').style.display='none'" style="padding:7px 14px;background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:4px;font-size:11px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin:18px 0 13px;padding-bottom:8px;border-bottom:1px solid var(--border);display:none;">■ LABOUR COST ASSUMPTIONS</div>
+
+  <!-- ESTIMATE NOTICE -->
+
+<div style="display:none;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px;">
+
+    <!-- LEFT: EDITABLE ASSUMPTIONS BLOCK -->
+    <div style="background:var(--bg3);border-radius:7px;padding:15px 17px;border:1px solid var(--border);">
+      <div class="sec" style="margin-top:0;">✎ TEAM COST ASSUMPTIONS</div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Click any value below to edit. Press Tab or Enter to move to the next field. All figures update the results automatically.</div>
+
+      <!-- input row helper styles inline -->
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">NUMBER OF TEAM MEMBERS</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">All staff incl. storemen, drivers &amp; assistants</div>
+        </div>
+        <input type="number" id="lc-members" value="16" min="1" max="100" step="1" oninput="lcCalc()" style="width: 72px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">TOTAL MONTHLY SALARIES — ALL STAFF (R)</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Total salary bill for all 16 people combined</div>
+        </div>
+        <input type="number" id="lc-salary" value="420000" min="1000" max="200000" step="500" oninput="lcCalc()" style="width: 100px; text-align: right; font-size: 13px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">MONTHLY OVERHEAD (rent, lease, water, lights, security) (R)</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Fixed monthly factory overhead costs</div>
+        </div>
+        <input type="number" id="lc-overhead" value="200000" min="0" max="2000000" step="1000" oninput="lcCalc()" style="width: 72px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">WORKING HOURS PER PERSON PER MONTH</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Updated: 198 hrs (22 days × 9 hrs)</div>
+        </div>
+        <input type="number" id="lc-hours" value="198" min="80" max="300" step="1" oninput="lcCalc()" style="width: 72px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div class="sec" style="margin-top:13px;">✎ RIG REBUILD ASSUMPTIONS</div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">TOTAL HOURS TO REBUILD ONE RIG</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Sum of all task planned hours in the tracker</div>
+        </div>
+        <input type="number" id="lc-righrs" value="712" min="50" max="5000" step="1" oninput="lcCalc()" style="width: 80px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">PARTS BUDGET PER RIG (R)</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Estimated or confirmed parts/materials cost per unit</div>
+        </div>
+        <input type="number" id="lc-parts" value="5762403" min="0" max="50000000" step="1000" oninput="lcCalc()" style="width: 110px; text-align: right; font-size: 12px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:8px;padding:8px 10px;background:rgba(0,200,150,0.07);border-radius:5px;border:1px solid rgba(0,200,150,0.3);">
+        <div>
+          <div style="font-size:9px;color:var(--green);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">BUDGET PER RIG (R)</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Approved rebuild budget per machine</div>
+        </div>
+        <input type="number" id="lc-budget" value="6000000" min="0" max="50000000" step="100000" oninput="lcCalc()" style="width: 110px; text-align: right; font-size: 12px; font-weight: 800; color: var(--green); background: var(--bg4); border: 1px solid var(--green); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:4px;padding:8px 10px;background:rgba(255,85,85,0.07);border-radius:5px;border:1px solid rgba(255,85,85,0.3);">
+        <div>
+          <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">WARNING THRESHOLD — LABOUR % OF TOTAL BUDGET</div>
+          <div style="font-size:9px;color:var(--muted);font-style:italic;">Flag when labour exceeds this % of rig cost</div>
+        </div>
+        <input type="number" id="lc-warn" value="20" min="1" max="100" step="1" oninput="lcCalc()" style="width: 60px; text-align: right; font-size: 14px; font-weight: 800; color: var(--red); background: var(--bg4); border: 1px solid var(--red); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
+      </div>
+      <div style="font-size:9px;color:var(--muted);text-align:right;padding-right:4px;margin-top:2px;">%</div>
+
+      <button id="lc-save-btn" onclick="lcSave();toast('✓ Labour assumptions saved')" style="width:100%;margin-top:13px;padding:10px;background:var(--bg4);border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;">💾 SAVE ASSUMPTIONS</button>
+
+      <div style="margin-top:10px;padding:9px 11px;background:var(--bg4);border-radius:5px;border-left:3px solid var(--gold);">
+        <div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:4px;">HOW COST PER HOUR IS CALCULATED</div>
+        <div style="font-size:9px;color:var(--muted);line-height:1.7;">
+          Total monthly cost = Salaries + Overhead<br>
+          Total man-hours/month = Members × Hrs/month<br>
+          <strong style="color:var(--gold);">Cost per hour = Team cost ÷ Total team hours</strong><br>
+          Labour per rig = Cost/hr × Rig rebuild hours<br>True all-in = Parts + Labour + Overhead during build
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;" id="lc-kpis"></div>
+      <div style="background:var(--bg3);border-radius:7px;padding:13px 15px;border:1px solid var(--border);">
+        <div class="sec" style="margin-top:0;">BUDGET IMPACT PER RIG</div>
+        <div id="lc-impact"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row: Per Unit + Fleet -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;">
+
+    <!-- PER UNIT -->
+    <div style="background:var(--bg3);border-radius:7px;padding:13px 15px;border:1px solid var(--border);">
+      <div class="sec" style="margin-top:0;">COST BREAKDOWN — 1 RIG</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">PARTS</div>
+          <div id="lc-unit-parts" style="font-size:16px;font-weight:800;color:var(--gold);"></div>
+        </div>
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">LABOUR</div>
+          <div id="lc-unit-labour" style="font-size:16px;font-weight:800;"></div>
+        </div>
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">TOTAL / RIG</div>
+          <div id="lc-unit-total" style="font-size:16px;font-weight:800;color:var(--gold);"></div>
+        </div>
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">LABOUR SHARE</div>
+          <div id="lc-unit-pct" style="font-size:16px;font-weight:800;"></div>
+        </div>
+      </div>
+      <div style="position:relative;height:200px;"><canvas id="ch-unit"></canvas></div>
+    </div>
+
+    <!-- FLEET -->
+    <div style="background:var(--bg3);border-radius:7px;padding:13px 15px;border:1px solid var(--border);">
+      <div class="sec" style="margin-top:0;">LABOUR vs PARTS — ALL 15 RIGS</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">TOTAL PARTS (FLEET)</div>
+          <div id="lc-fleet-parts" style="font-size:16px;font-weight:800;color:var(--gold);"></div>
+        </div>
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">TOTAL LABOUR (FLEET)</div>
+          <div id="lc-fleet-labour" style="font-size:16px;font-weight:800;"></div>
+        </div>
+        <div style="background:var(--bg2);border-radius:5px;padding:9px 11px;border:1px solid var(--border);grid-column:span 2;">
+          <div style="font-size:8px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:3px;">TOTAL FLEET COST (PARTS + LABOUR)</div>
+          <div id="lc-fleet-total" style="font-size:18px;font-weight:800;color:var(--gold);"></div>
+        </div>
+      </div>
+      <div style="position:relative;height:200px;"><canvas id="ch-labour"></canvas></div>
+    </div>
+
+  </div>
+</div><!-- end display:none labour cost -->
+</div>
+
+<!-- PUSH LIVE MODAL -->
+<div id="modal-push" style="display: flex; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px 32px;width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+    <div style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:4px;letter-spacing:1px;">⬆ PUSH LIVE</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">This will package your current data and push it live to GitHub. Your client will see the update within 60 seconds.</div>
+    <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.8px;margin-bottom:5px;">GITHUB TOKEN</div>
+    <div style="display:flex;gap:6px;margin-bottom:16px;">
+      <input type="password" id="push-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1;font-size:12px;padding:9px 11px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;">
+      <button onclick="togglePushToken()" style="background:var(--bg4);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:0 10px;cursor:pointer;font-size:10px;">SHOW</button>
+    </div>
+    <div style="margin-bottom:6px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted);">
+        <input type="checkbox" id="save-token" style="cursor:pointer;"> Remember token on this device
+      </label>
+    </div>
+    <div id="push-status" style="display: block; padding: 10px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 12px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: var(--cyan);">Fetching template...</div>
+    <div id="push-progress" style="display: block; height: 4px; background: var(--bg4); border-radius: 2px; margin-bottom: 12px; overflow: hidden;">
+      <div id="push-progress-bar" style="height: 100%; background: linear-gradient(90deg,var(--cyan),var(--green)); border-radius: 2px; width: 30%; transition: width 0.4s;"></div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" disabled="">Fetching...</button>
+      <button onclick="hidePushModal()" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:11px 16px;font-size:12px;cursor:pointer;">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT PAGE -->
+<div id="page-print" class="page" style="background:#fff;color:#000;">
+  <div class="phdr no-print" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:2px solid #F5A800;margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <img src="data:image/png;base64,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" style="height:40px;width:auto;mix-blend-mode:screen;" alt="EMS Mining">
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#F5A800;">EMS MINING — SANDVIK D25KS REBUILD TRACKER</div>
+        <div style="font-size:10px;color:#666;" id="pdate"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn no-print" onclick="window.print()">PRINT / SAVE PDF</button>
+      <button class="btn dark no-print" onclick="sp('fleet',document.querySelector('.nt'))">← BACK</button>
+    </div>
+  </div>
+  <div id="pcontent"></div>
+</div>
+
+</div><!-- /app -->
+<div class="toast" id="toast" style="display: none;">✓ Data synced — 31 records loaded</div>
+
+<script>
+// ═══════════════════════════════
+// VERSION STAMP — clears corrupt localStorage on first load of new version
+// Change this string any time a breaking data fix is deployed
+// ═══════════════════════════════
+(function(){
+  const VER="v9.01-ev-fixed";
+  if(localStorage.getItem("ems_ver")!==VER){
+    localStorage.removeItem("lc_assumptions");
+    // Clear old planned hours (ph_) so new TP values take effect
+    for(let i=localStorage.length-1;i>=0;i--){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith("ph_")) localStorage.removeItem(k);
+    }
+    // Pre-populate EV tracker data — only if not already saved
+    const evPreload={"DK004":{"budgetDays":49,"usedDays":22,"budgetCost":6000000,"actualUsed":18234},"DK007":{"budgetDays":49,"usedDays":21,"budgetCost":6000000,"actualUsed":4313307},"DK013":{"budgetDays":49,"usedDays":43,"budgetCost":6000000,"actualUsed":5324506},"DK014":{"budgetDays":47,"usedDays":21,"budgetCost":6000000,"actualUsed":225470}};
+    Object.entries(evPreload).forEach(([mid,d])=>{
+      if(!localStorage.getItem('ev_'+mid)) localStorage.setItem('ev_'+mid,JSON.stringify(d)); // only seed if missing
+    });
+    localStorage.setItem("ems_ver",VER);
+    console.log("EMS Tracker: version stamp run for "+VER);
+  }
+})();
+
+// ═══════════════════════════════
+// AUTH
+// ═══════════════════════════════
+const USERS={viewer:{pass:"ems2026",role:"viewer"},admin:{pass:"emsadmin",role:"admin"}};
+let role=null;
+
+function login(){
+  const u=document.getElementById("lu").value.trim().toLowerCase();
+  const p=document.getElementById("lp").value;
+  const usr=USERS[u];
+  if(usr&&usr.pass===p){
+    role=usr.role;
+    document.getElementById("login-screen").style.display="none";
+    document.getElementById("app").style.display="block";
+    const rb=document.getElementById("rbadge");
+    rb.textContent=role==="admin"?"ADMIN — DATA CAPTURER":"VIEWER";
+    rb.className="rbadge "+(role==="admin"?"admin":"viewer");
+    document.querySelectorAll(".ao").forEach(e=>e.style.display="block");
+    lcSetRole(role);
+    // ── AUTO-LOAD: fetch latest data from GitHub before rendering ──
+    autoLoadFromGitHub().then(()=>{ renderFleet(); });
+  } else {
+    document.getElementById("lerr").textContent="Incorrect username or password.";
+  }
+}
+
+// ── PUSH LIVE ──
+const GITHUB_OWNER="eric0103360";
+const GITHUB_REPO="rig-dashboard";
+const GITHUB_FILE="dashboard.html";
+
+function showPushModal(){
+  // Only admin can push live
+  if(role!=="admin"){ toast("⚠ Admin access required to push live."); return; }
+  // Pre-fill saved token if available
+  const saved=localStorage.getItem("gh_token");
+  if(saved){ document.getElementById("push-token").value=saved; document.getElementById("save-token").checked=true; }
+  document.getElementById("push-status").style.display="none";
+  document.getElementById("push-progress").style.display="none";
+  document.getElementById("push-go-btn").disabled=false;
+  document.getElementById("push-go-btn").textContent="⬆ PUSH TO LIVE";
+  document.getElementById("modal-push").style.display="flex";
+}
+function hidePushModal(){ document.getElementById("modal-push").style.display="none"; }
+function togglePushToken(){
+  const t=document.getElementById("push-token");
+  t.type=t.type==="password"?"text":"password";
+}
+function setPushStatus(msg,type){
+  const el=document.getElementById("push-status");
+  el.textContent=msg;
+  el.style.display="block";
+  el.style.background=type==="success"?"rgba(0,200,150,0.1)":type==="error"?"rgba(255,85,85,0.1)":"rgba(0,212,255,0.1)";
+  el.style.border=type==="success"?"1px solid rgba(0,200,150,0.3)":type==="error"?"1px solid rgba(255,85,85,0.3)":"1px solid rgba(0,212,255,0.3)";
+  el.style.color=type==="success"?"var(--green)":type==="error"?"var(--red)":"var(--cyan)";
+}
+function setPushProgress(pct){
+  document.getElementById("push-progress").style.display="block";
+  document.getElementById("push-progress-bar").style.width=pct+"%";
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// AUTO-LOAD: On every page open, fetch latest data from GitHub
+// This means ANY version of the file always has the latest data
+// ══════════════════════════════════════════════════════════════════
+async function autoLoadFromGitHub(){
+  try {
+    const url='https://eric0103360.github.io/rig-dashboard/ems-data.json?t='+Date.now();
+    toast('⟳ Syncing latest data from server...');
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok) return; // No data file yet — first time use
+    const data=await res.json();
+    if(!data||typeof data!=='object') return;
+    // Write all EMS keys into localStorage
+    let count=0;
+    Object.entries(data).forEach(([k,v])=>{
+      localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));
+      count++;
+    });
+    console.log('✓ Auto-loaded '+count+' keys from GitHub');
+    toast('✓ Data synced — '+count+' records loaded');
+    // Reload machines from fresh localStorage
+    if(typeof loadMachines==='function') machines=loadMachines();
+  } catch(e){
+    console.log('Auto-load skipped:',e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════  
+// COLLECT EMS DATA: only EMS Sandvik tracker keys
+// ══════════════════════════════════════════════════════════════════
+function collectEMSData(){
+  // Never include session, role or GitHub token in pushed data
+  const isEMSKey=k=>(
+    k==='emsv4'||k==='ems_ver'||
+    k.startsWith('ev_DK')||k.startsWith('td_DK')||
+    k.startsWith('dk_DK')||k.startsWith('ph_DK')||
+    k.startsWith('gantt_DK')||k.startsWith('hrs_override_DK')||
+    k.startsWith('lc_assumptions')||k.startsWith('ems_machines')
+  );
+  const data={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&isEMSKey(k)) data[k]=localStorage.getItem(k);
+  }
+  return data;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PUSH DATA FILE: push ems-data.json to GitHub
+// Called automatically after every Push Live
+// ══════════════════════════════════════════════════════════════════
+
+async function saveTemplate(token,cleanHtml){
+  try{
+    const apiUrl=`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/dashboard-template.html`;
+    let sha=null;
+    const getRes=await fetch(apiUrl,{headers:{Authorization:"token "+token,Accept:"application/vnd.github.v3+json"},cache:"no-store"});
+    if(getRes.ok){const d=await getRes.json();sha=d.sha||null;}
+    const base64=btoa(unescape(encodeURIComponent(cleanHtml)));
+    const body={message:"Template update",content:base64};
+    if(sha) body.sha=sha;
+    await fetch(apiUrl,{method:"PUT",headers:{Authorization:"token "+token,Accept:"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    console.log('✓ Template saved');
+  }catch(e){console.log('Template save skipped:',e.message);}
+}
+async function pushDataFile(token){
+  try {
+    const data=collectEMSData();
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+    const apiUrl='https://api.github.com/repos/eric0103360/rig-dashboard/contents/ems-data.json';
+    // Get current SHA if file exists
+    let sha=null;
+    const getRes=await fetch(apiUrl,{headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json'},cache:'no-store'});
+    if(getRes.ok){const d=await getRes.json();sha=d.sha;}
+    // Push the data file
+    await fetch(apiUrl,{
+      method:'PUT',
+      headers:{Authorization:'token '+token,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({
+        message:'Data update — '+new Date().toLocaleString('en-ZA'),
+        content:content,
+        sha:sha
+      })
+    });
+    console.log('✓ ems-data.json pushed to GitHub');
+  } catch(e){
+    console.log('Data file push skipped:',e.message);
+  }
+}
+
+async function doPushLive(){
+  const token=document.getElementById("push-token").value.trim();
+  if(!token){ setPushStatus("⚠ Please enter your GitHub token.","error"); return; }
+
+  if(document.getElementById("save-token").checked){
+    localStorage.setItem("gh_token",token);
+  } else {
+    localStorage.removeItem("gh_token");
+  }
+
+  const btn=document.getElementById("push-go-btn");
+  btn.disabled=true; btn.textContent="Collecting data...";
+  setPushStatus("Collecting data...","info");
+  setPushProgress(10);
+
+  try{
+    // STEP 1: Collect ONLY EMS data — never session/role/token
+    const isEMSKey=k=>(
+      k==='emsv4'||k==='ems_ver'||
+      k.startsWith('ev_DK')||k.startsWith('td_DK')||
+      k.startsWith('dk_DK')||k.startsWith('ph_DK')||
+      k.startsWith('gantt_DK')||k.startsWith('hrs_override_DK')||
+      k.startsWith('lc_assumptions')||k.startsWith('ems_machines')
+    );
+    const lsData={};
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&isEMSKey(k)) lsData[k]=localStorage.getItem(k);
+    }
+
+    // STEP 2: Build inject — loads data, REMOVES session so client sees login
+    const inject=`
+
+</body></html>
