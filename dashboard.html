@@ -282,7 +282,7 @@ input:focus,select:focus{border-color:var(--gold);}
       <input type="password" id="lp" placeholder="Enter password" autocomplete="new-password" onkeydown="if(event.key==='Enter')login()" style="width:100%;padding-right:50px;">
       <button type="button" onclick="var x=document.getElementById('lp');x.type=x.type==='password'?'text':'password';this.textContent=x.type==='password'?'SHOW':'HIDE'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gold);font-size:10px;font-weight:700;cursor:pointer;">SHOW</button>
     </div></div>
-    <div class="lerr" id="lerr"></div>
+    <div class="lerr" id="lerr">Incorrect username or password.</div>
     <button class="btn" style="width:100%;margin-top:8px;padding:10px;" onclick="login()">SIGN IN</button>
     <div style="margin-top:14px;font-size:10px;color:var(--muted);line-height:1.8;">
       Contact your system administrator for login credentials.
@@ -304,7 +304,7 @@ input:focus,select:focus{border-color:var(--gold);}
   <div style="display:flex;align-items:center;gap:11px;">
     <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
     <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
-    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">28 Jun 2026<br>18:50</div>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">28 Jun 2026<br>18:59</div>
     <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file">⬇ BACKUP</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file">⬆ RESTORE</button>
@@ -789,8 +789,8 @@ input:focus,select:focus{border-color:var(--gold);}
   </div>
 
   <div class="crow">
-    <div class="cc"><div class="cct">MACHINE BUILD PROGRESS</div><div style="position:relative;height:280px;"><canvas id="ch-m" style="box-sizing: border-box; display: block; height: 280px; width: 613px;" width="613" height="280"></canvas></div></div>
-    <div class="cc"><div class="cct">FLEET STATUS</div><div style="position:relative;height:180px;"><canvas id="ch-s" style="box-sizing: border-box; display: block; height: 180px; width: 613px;" width="613" height="180"></canvas></div><div id="sleg" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:10px;"><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#F5A800;border-radius:2px;display:inline-block;"></span>Active: 4</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#00C896;border-radius:2px;display:inline-block;"></span>Complete: 0</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#5A9BD4;border-radius:2px;display:inline-block;"></span>Planned: 11</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#FF4B4B;border-radius:2px;display:inline-block;"></span>On Hold: 0</span></div></div>
+    <div class="cc"><div class="cct">MACHINE BUILD PROGRESS</div><div style="position:relative;height:280px;"><canvas id="ch-m" width="613" height="280" style="display: block; box-sizing: border-box; height: 280px; width: 613px;"></canvas></div></div>
+    <div class="cc"><div class="cct">FLEET STATUS</div><div style="position:relative;height:180px;"><canvas id="ch-s" width="613" height="180" style="display: block; box-sizing: border-box; height: 180px; width: 613px;"></canvas></div><div id="sleg" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:10px;"><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#F5A800;border-radius:2px;display:inline-block;"></span>Active: 4</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#00C896;border-radius:2px;display:inline-block;"></span>Complete: 0</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#5A9BD4;border-radius:2px;display:inline-block;"></span>Planned: 11</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#FF4B4B;border-radius:2px;display:inline-block;"></span>On Hold: 0</span></div></div>
   </div>
 </div>
 
@@ -1182,12 +1182,12 @@ input:focus,select:focus{border-color:var(--gold);}
         <input type="checkbox" id="save-token" style="cursor:pointer;"> Remember token on this device
       </label>
     </div>
-    <div id="push-status" style="display: block; padding: 10px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 12px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: var(--cyan);">Packaging dashboard...</div>
+    <div id="push-status" style="display: block; padding: 10px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 12px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: var(--cyan);">Fetching template...</div>
     <div id="push-progress" style="display: block; height: 4px; background: var(--bg4); border-radius: 2px; margin-bottom: 12px; overflow: hidden;">
       <div id="push-progress-bar" style="height: 100%; background: linear-gradient(90deg,var(--cyan),var(--green)); border-radius: 2px; width: 30%; transition: width 0.4s;"></div>
     </div>
     <div style="display:flex;gap:8px;">
-      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" disabled="">Packaging...</button>
+      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" disabled="">Fetching...</button>
       <button onclick="hidePushModal()" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:11px 16px;font-size:12px;cursor:pointer;">CANCEL</button>
     </div>
   </div>
@@ -1212,7 +1212,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 </div><!-- /app -->
-<div class="toast" id="toast" style="display: none;">⟳ Syncing latest data from server...</div>
+<div class="toast" id="toast" style="display: none;">✓ Data synced — 31 records loaded</div>
 
 <script>
 // ═══════════════════════════════
@@ -1351,6 +1351,20 @@ function collectEMSData(){
 // PUSH DATA FILE: push ems-data.json to GitHub
 // Called automatically after every Push Live
 // ══════════════════════════════════════════════════════════════════
+
+async function saveTemplate(token,cleanHtml){
+  try{
+    const apiUrl=`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/dashboard-template.html`;
+    let sha=null;
+    const getRes=await fetch(apiUrl,{headers:{Authorization:"token "+token,Accept:"application/vnd.github.v3+json"},cache:"no-store"});
+    if(getRes.ok){const d=await getRes.json();sha=d.sha||null;}
+    const base64=btoa(unescape(encodeURIComponent(cleanHtml)));
+    const body={message:"Template update",content:base64};
+    if(sha) body.sha=sha;
+    await fetch(apiUrl,{method:"PUT",headers:{Authorization:"token "+token,Accept:"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    console.log('✓ Template saved');
+  }catch(e){console.log('Template save skipped:',e.message);}
+}
 async function pushDataFile(token){
   try {
     const data=collectEMSData();
