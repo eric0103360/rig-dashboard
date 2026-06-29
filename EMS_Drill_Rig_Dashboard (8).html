@@ -2,7 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<!-- PWA Meta Tags -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EMS Rebuild">
+<meta name="application-name" content="EMS Rebuild">
+<meta name="theme-color" content="#F5A800">
+<meta name="description" content="EMS Mining Sandvik D25KS Rebuild Tracker">
+<!-- Manifest -->
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22EMS%20Sandvik%20Rebuild%20Tracker%22%2C%22short_name%22%3A%22EMS%20Rebuild%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230d1117%22%2C%22theme_color%22%3A%22%23F5A800%22%2C%22orientation%22%3A%22any%22%7D">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -3323,6 +3333,41 @@ function lcSetRole(role){
   if(note)note.style.display='none';
 }
 
+</script>
+
+
+
+<!-- Install App Banner -->
+<div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--gold);color:#000;padding:12px 16px;z-index:9998;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700">
+  <span>📱 Add EMS Rebuild to your home screen</span>
+  <div style="display:flex;gap:8px">
+    <button id="install-btn" style="background:#000;color:var(--gold);border:none;padding:6px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer">INSTALL</button>
+    <button onclick="document.getElementById('install-banner').style.display='none'" style="background:rgba(0,0,0,0.2);color:#000;border:none;padding:6px 10px;border-radius:5px;font-size:11px;cursor:pointer">✕</button>
+  </div>
+</div>
+<script>
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('install-banner');
+  if(banner) banner.style.display = 'flex';
+});
+const installBtn = document.getElementById('install-btn');
+if(installBtn){
+  installBtn.addEventListener('click', async () => {
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('install-banner').style.display = 'none';
+    }
+  });
+}
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').style.display = 'none';
+  console.log('✓ EMS Rebuild app installed');
+});
 </script>
 </body>
 </html>
