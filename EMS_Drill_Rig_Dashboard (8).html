@@ -268,6 +268,9 @@ input:focus,select:focus{border-color:var(--gold);}
 /* TOAST */
 .toast{position:fixed;bottom:16px;right:16px;background:var(--green);color:#000;font-weight:700;padding:8px 16px;border-radius:5px;font-size:11px;display:none;z-index:9998;}
 </style>
+<!-- Firebase SDK - loaded synchronously so firebase is available immediately -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" type="text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -277,13 +280,13 @@ input:focus,select:focus{border-color:var(--gold);}
     <img src="data:image/png;base64,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" style="height:54px;width:auto;mix-blend-mode:screen;" alt="EMS Mining">
     <div class="login-title">EMS MINING</div>
     <div class="login-sub">Drill Rig Fleet Dashboard · Please sign in</div>
-    <div class="lf"><label>USERNAME</label><input type="text" id="lu" placeholder="Enter username" autocomplete="off" onkeydown="if(event.key==='Enter')login()" fdprocessedid="qln47c"></div>
+    <div class="lf"><label>USERNAME</label><input type="text" id="lu" placeholder="Enter username" autocomplete="off" onkeydown="if(event.key==='Enter')login()"></div>
     <div class="lf"><label>PASSWORD</label><div style="position:relative;">
-      <input type="password" id="lp" placeholder="Enter password" autocomplete="new-password" onkeydown="if(event.key==='Enter')login()" style="width:100%;padding-right:50px;" fdprocessedid="o0ujpo">
-      <button type="button" onclick="var x=document.getElementById('lp');x.type=x.type==='password'?'text':'password';this.textContent=x.type==='password'?'SHOW':'HIDE'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gold);font-size:10px;font-weight:700;cursor:pointer;" fdprocessedid="u0hg0l">SHOW</button>
+      <input type="password" id="lp" placeholder="Enter password" autocomplete="new-password" onkeydown="if(event.key==='Enter')login()" style="width:100%;padding-right:50px;">
+      <button type="button" onclick="var x=document.getElementById('lp');x.type=x.type==='password'?'text':'password';this.textContent=x.type==='password'?'SHOW':'HIDE'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gold);font-size:10px;font-weight:700;cursor:pointer;">SHOW</button>
     </div></div>
-    <div class="lerr" id="lerr">Incorrect username or password.</div>
-    <button class="btn" style="width:100%;margin-top:8px;padding:10px;" onclick="login()" fdprocessedid="90mc">SIGN IN</button>
+    <div class="lerr" id="lerr"></div>
+    <button class="btn" style="width:100%;margin-top:8px;padding:10px;" onclick="login()">SIGN IN</button>
     <div style="margin-top:14px;font-size:10px;color:var(--muted);line-height:1.8;">
       Contact your system administrator for login credentials.
     </div>
@@ -304,12 +307,12 @@ input:focus,select:focus{border-color:var(--gold);}
   <div style="display:flex;align-items:center;gap:11px;">
     <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
     <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
-    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">28 Jun 2026<br>21:05</div>
-    <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()" fdprocessedid="m3nspl">⬆ PUSH LIVE</button>
-    <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file" fdprocessedid="rd7mia">⬇ BACKUP</button>
-    <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file" fdprocessedid="cqscr">⬆ RESTORE</button>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">29 Jun 2026<br>10:52</div>
+    <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
+    <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file">⬇ BACKUP</button>
+    <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file">⬆ RESTORE</button>
     <input type="file" id="restore-input" accept=".json" style="display:none;" onchange="restoreData(event)">
-    <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="logout()" fdprocessedid="d9naja">SIGN OUT</button>
+    <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="logout()">SIGN OUT</button>
   </div>
 </div>
 
@@ -1171,11 +1174,11 @@ input:focus,select:focus{border-color:var(--gold);}
 <div id="modal-push" style="display: flex; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center;">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px 32px;width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
     <div style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:4px;letter-spacing:1px;">⬆ PUSH LIVE</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">This will package your current data and push it live to GitHub. Your client will see the update within 60 seconds.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">This deploys the latest app version to GitHub Pages. Your data saves automatically to Firebase — no push needed for data updates.</div>
     <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.8px;margin-bottom:5px;">GITHUB TOKEN</div>
     <div style="display:flex;gap:6px;margin-bottom:16px;">
-      <input type="password" id="push-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1;font-size:12px;padding:9px 11px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;" fdprocessedid="nmqzxi">
-      <button onclick="togglePushToken()" style="background:var(--bg4);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:0 10px;cursor:pointer;font-size:10px;" fdprocessedid="fbz0x">SHOW</button>
+      <input type="password" id="push-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1;font-size:12px;padding:9px 11px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none;">
+      <button onclick="togglePushToken()" style="background:var(--bg4);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:0 10px;cursor:pointer;font-size:10px;">SHOW</button>
     </div>
     <div style="margin-bottom:6px;">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:var(--muted);">
@@ -1187,8 +1190,8 @@ input:focus,select:focus{border-color:var(--gold);}
       <div id="push-progress-bar" style="height: 100%; background: linear-gradient(90deg,var(--cyan),var(--green)); border-radius: 2px; width: 30%; transition: width 0.4s;"></div>
     </div>
     <div style="display:flex;gap:8px;">
-      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" fdprocessedid="sxq2k" disabled="">Fetching...</button>
-      <button onclick="hidePushModal()" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:11px 16px;font-size:12px;cursor:pointer;" fdprocessedid="zxgz0p">CANCEL</button>
+      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" disabled="">Fetching...</button>
+      <button onclick="hidePushModal()" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:11px 16px;font-size:12px;cursor:pointer;">CANCEL</button>
     </div>
   </div>
 </div>
@@ -1212,7 +1215,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 </div><!-- /app -->
-<div class="toast" id="toast" style="display: none;">✓ Data synced — 31 records loaded</div>
+<div class="toast" id="toast" style="display: none;">✓ Dashboard pushed live</div>
 
 <script>
 // ═══════════════════════════════
@@ -1241,6 +1244,94 @@ input:focus,select:focus{border-color:var(--gold);}
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
+
+// ══════════════════════════════════════════════════════════════
+// FIREBASE — real-time cloud storage
+// ══════════════════════════════════════════════════════════════
+const FB_CONFIG = {
+  apiKey: "AIzaSyC3sKMm02GnikBdgXPd4RUm7RxnsR90A_I",
+  authDomain: "fse-irn-system.firebaseapp.com",
+  projectId: "fse-irn-system",
+  storageBucket: "fse-irn-system.firebasestorage.app",
+  messagingSenderId: "1097944808267",
+  appId: "1:1097944808267:web:d8f1f3a52e2223253f86ce"
+};
+
+// Initialize Firebase safely
+let db;
+function initFirebase(){
+  try {
+    if(typeof firebase === 'undefined') { console.error('Firebase not loaded'); return false; }
+    if(!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    db = firebase.firestore();
+    console.log('✓ Firebase initialized');
+    return true;
+  } catch(e){ console.error('Firebase init failed:',e); return false; }
+}
+const EMS_DOC = 'ems-sandvik-tracker';
+const EMS_COLL = 'ems_data';
+
+// ── Save ALL EMS localStorage to Firebase ──
+async function cloudSave(){
+  if(!db && !initFirebase()) return;
+  try {
+    const isEMSKey=k=>(
+      k==='emsv4'||k==='ems_ver'||
+      k.startsWith('ev_DK')||k.startsWith('td_DK')||
+      k.startsWith('dk_DK')||k.startsWith('ph_DK')||
+      k.startsWith('gantt_DK')||k.startsWith('hrs_override_DK')||
+      k.startsWith('lc_assumptions')||k.startsWith('ems_machines')
+    );
+    const data={updatedAt: new Date().toISOString()};
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&isEMSKey(k)) data[k.replace(/\./g,'_')]=localStorage.getItem(k);
+    }
+    await db.collection(EMS_COLL).doc(EMS_DOC).set(data,{merge:true});
+    console.log('✓ Cloud save complete');
+    const cs=document.getElementById('cloud-status');
+    if(cs){cs.style.display='inline';cs.textContent='☁ saved';setTimeout(()=>cs.style.display='none',3000);}
+  } catch(e){ console.error('Cloud save failed:',e.message); }
+}
+
+// ── Load ALL EMS data from Firebase to localStorage ──
+async function cloudLoad(){
+  if(!db && !initFirebase()) return false;
+  try {
+    const snap = await db.collection(EMS_COLL).doc(EMS_DOC).get();
+    if(!snap.exists) return false;
+    const data = snap.data();
+    let count = 0;
+    Object.entries(data).forEach(([k,v])=>{
+      if(k!=='updatedAt'){
+        localStorage.setItem(k.replace(/_DK/g,'_DK'),v);
+        count++;
+      }
+    });
+    console.log('✓ Cloud load: '+count+' keys');
+    return true;
+  } catch(e){ console.error('Cloud load failed:',e.message); return false; }
+}
+
+// ── Auto-save hook — wraps localStorage.setItem ──
+const _origSetItem = localStorage.setItem.bind(localStorage);
+let _cloudSaveTimer = null;
+localStorage.setItem = function(k,v){
+  _origSetItem(k,v);
+  // Debounce cloud save by 2 seconds after last change
+  const isEMSKey=k=>(
+    k==='emsv4'||k==='ems_ver'||
+    k.startsWith('ev_DK')||k.startsWith('td_DK')||
+    k.startsWith('dk_DK')||k.startsWith('ph_DK')||
+    k.startsWith('gantt_DK')||k.startsWith('hrs_override_DK')||
+    k.startsWith('lc_assumptions')||k.startsWith('ems_machines')
+  );
+  if(isEMSKey(k)){
+    clearTimeout(_cloudSaveTimer);
+    _cloudSaveTimer = setTimeout(cloudSave, 2000);
+  }
+};
+
 const USERS={viewer:{pass:"ems2026",role:"viewer"},admin:{pass:"emsadmin",role:"admin"}};
 let role=null;
 
@@ -1257,8 +1348,14 @@ function login(){
     rb.className="rbadge "+(role==="admin"?"admin":"viewer");
     document.querySelectorAll(".ao").forEach(e=>e.style.display="block");
     lcSetRole(role);
-    // ── AUTO-LOAD: fetch latest data from GitHub before rendering ──
-    autoLoadFromGitHub().then(()=>{ renderFleet(); });
+    // ── AUTO-LOAD: fetch latest data from Firebase ──
+    initFirebase();
+    toast('⟳ Syncing from cloud...');
+    cloudLoad().then(loaded=>{
+      if(loaded) toast('✓ Cloud data loaded');
+      machines=loadMachines();
+      renderFleet();
+    });
   } else {
     document.getElementById("lerr").textContent="Incorrect username or password.";
   }
@@ -1304,7 +1401,7 @@ function setPushProgress(pct){
 // AUTO-LOAD: On every page open, fetch latest data from GitHub
 // This means ANY version of the file always has the latest data
 // ══════════════════════════════════════════════════════════════════
-async function autoLoadFromGitHub(){
+async function autoLoadFromGitHub_DISABLED(){
   try {
     const url='https://eric0103360.github.io/rig-dashboard/ems-data.json?t='+Date.now();
     toast('⟳ Syncing latest data from server...');
@@ -1423,5 +1520,4 @@ async function doPushLive(){
     // STEP 2: Build inject — loads data, REMOVES session so client sees login
     const inject=`
 
-
-<span id="PING_IFRAME_FORM_DETECTION" style="display: none;"></span></body></html>
+</body></html>
