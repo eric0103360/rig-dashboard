@@ -307,7 +307,7 @@ input:focus,select:focus{border-color:var(--gold);}
   <div style="display:flex;align-items:center;gap:11px;">
     <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
     <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
-    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">29 Jun 2026<br>10:52</div>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">29 Jun 2026<br>10:58</div>
     <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file">⬇ BACKUP</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file">⬆ RESTORE</button>
@@ -1185,12 +1185,12 @@ input:focus,select:focus{border-color:var(--gold);}
         <input type="checkbox" id="save-token" style="cursor:pointer;"> Remember token on this device
       </label>
     </div>
-    <div id="push-status" style="display: block; padding: 10px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 12px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: var(--cyan);">Fetching template...</div>
+    <div id="push-status" style="display: block; padding: 10px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 12px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: var(--cyan);">Packaging dashboard...</div>
     <div id="push-progress" style="display: block; height: 4px; background: var(--bg4); border-radius: 2px; margin-bottom: 12px; overflow: hidden;">
       <div id="push-progress-bar" style="height: 100%; background: linear-gradient(90deg,var(--cyan),var(--green)); border-radius: 2px; width: 30%; transition: width 0.4s;"></div>
     </div>
     <div style="display:flex;gap:8px;">
-      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" disabled="">Fetching...</button>
+      <button id="push-go-btn" onclick="doPushLive()" style="flex:1;background:var(--gold);color:#000;border:none;border-radius:6px;padding:11px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:0.5px;" disabled="">Packaging...</button>
       <button onclick="hidePushModal()" style="background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:11px 16px;font-size:12px;cursor:pointer;">CANCEL</button>
     </div>
   </div>
@@ -1215,7 +1215,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 </div><!-- /app -->
-<div class="toast" id="toast" style="display: none;">✓ Dashboard pushed live</div>
+<div class="toast" id="toast" style="display: none;">✓ Cloud data loaded</div>
 
 <script>
 // ═══════════════════════════════
