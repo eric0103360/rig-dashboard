@@ -275,7 +275,7 @@ input:focus,select:focus{border-color:var(--gold);}
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen" style="display: none;">
+<div id="login-screen" style="display: flex;">
   <div class="login-box">
     <img src="data:image/png;base64,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" style="height:54px;width:auto;mix-blend-mode:screen;" alt="EMS Mining">
     <div class="login-title">EMS MINING</div>
@@ -294,7 +294,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 <!-- APP -->
-<div id="app" style="display: block;">
+<div id="app" style="display: none;">
 
 <div class="hdr">
   <div style="display:flex;align-items:center;gap:13px;">
@@ -307,7 +307,7 @@ input:focus,select:focus{border-color:var(--gold);}
   <div style="display:flex;align-items:center;gap:11px;">
     <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
     <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
-    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">29 Jun 2026<br>11:10</div>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">29 Jun 2026<br>11:13</div>
     <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file">⬇ BACKUP</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file">⬆ RESTORE</button>
@@ -1171,7 +1171,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 <!-- PUSH LIVE MODAL -->
-<div id="modal-push" style="display: flex; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center;">
+<div id="modal-push" style="display: none; position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center;">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px 32px;width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
     <div style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:4px;letter-spacing:1px;">⬆ PUSH LIVE</div>
     <div style="font-size:11px;color:var(--muted);margin-bottom:18px;">This deploys the latest app version to GitHub Pages. Your data saves automatically to Firebase — no push needed for data updates.</div>
@@ -1215,7 +1215,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 </div><!-- /app -->
-<div class="toast" id="toast" style="display: none;">✓ Dashboard pushed live</div>
+<div class="toast" id="toast" style="display: none;">✓ Cloud data loaded</div>
 
 <script>
 // ═══════════════════════════════
