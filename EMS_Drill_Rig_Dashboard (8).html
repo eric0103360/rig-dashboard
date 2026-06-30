@@ -1500,11 +1500,11 @@ function renderRebuildSummary(){
       <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">${actualHrs}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${budgetDays||0}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${usedDays||0}</td>
-      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:${remDays<=10?'var(--red)':remDays<=20?'var(--gold)':'var(--green)'};">${remDays}</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:${(function(){const pct=budgetDays>0?(usedDays/budgetDays*100):0;return pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';})()};">${remDays}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
-        <span style="color:var(--text);">${labourPct?labourPct+'%':'—'}</span>
+        <span style="color:${labourPct>=70?'var(--green)':labourPct>=40?'var(--gold)':'var(--red)'};">${labourPct?labourPct+'%':'—'}</span>
         <span style="color:var(--muted);font-size:10px;"> | </span>
-        <span style="color:${(100-labourPct)<=20?'var(--red)':(100-labourPct)<=40?'var(--gold)':'var(--green)'};">${labourPct?Math.max(0,100-labourPct)+'%':'—'}</span>
+        <span style="color:var(--muted);">${labourPct?Math.max(0,100-labourPct)+'%':'—'}</span>
       </td>
       <td style="padding:8px 12px;text-align:right;font-size:11px;">${fmtR(budgetCost)}</td>
       <td style="padding:8px 12px;text-align:right;font-size:11px;">
@@ -2202,26 +2202,33 @@ function addMachine(){
   toast('✓ '+id+' added to build');
 }
 function recalcLabour(mid){
-  const hrsEl = document.getElementById('ev-hrs-'+mid);
-  const lrEl  = document.getElementById('ev-lr-'+mid);
-  const balEl = document.getElementById('ev-bal-'+mid);
-  const bcEl  = document.getElementById('ev-bc-'+mid);
-  const lcEl  = document.getElementById('ev-lc-'+mid);
-  const tsEl  = document.getElementById('ev-ts-'+mid);
-  const remEl = document.getElementById('ev-rem-'+mid);
+  const hrsEl  = document.getElementById('ev-hrs-'+mid);
+  const lrEl   = document.getElementById('ev-lr-'+mid);
+  const balEl  = document.getElementById('ev-bal-'+mid);
+  const bcEl   = document.getElementById('ev-bc-'+mid);
+  const lcEl   = document.getElementById('ev-lc-'+mid);
+  const tsEl   = document.getElementById('ev-ts-'+mid);
+  const remEl  = document.getElementById('ev-rem-'+mid);
+  const hremEl = document.getElementById('ev-hrem-'+mid);
+  const rcostEl= document.getElementById('ev-rcost-'+mid);
 
   const hrs = parseFloat(hrsEl?.value||0);
   const lr  = parseFloat(lrEl?.value||0);
   const bal = parseFloat(balEl?.value||0);
   const bc  = parseFloat(bcEl?.value||6000000);
 
-  const lc    = Math.round(lr * hrs);
-  const total = Math.round(bal + lc);
-  const rem   = Math.max(0, Math.round(bc - total));
+  const BUDGET_HRS = 443;
+  const hrsLeft = Math.max(0, BUDGET_HRS - hrs);
+  const lc      = Math.round(lr * hrs);
+  const rcost   = Math.round(lr * hrsLeft);
+  const total   = Math.round(bal + lc);
+  const rem     = Math.max(0, Math.round(bc - total));
 
-  if(lcEl)  lcEl.innerText  = 'R ' + lc.toLocaleString('en-ZA');
-  if(tsEl)  tsEl.innerText  = 'R ' + total.toLocaleString('en-ZA');
-  if(remEl) remEl.value     = rem;
+  if(lcEl)    lcEl.innerText    = 'R ' + lc.toLocaleString('en-ZA');
+  if(tsEl)    tsEl.innerText    = 'R ' + total.toLocaleString('en-ZA');
+  if(remEl)   remEl.value       = rem;
+  if(hremEl)  hremEl.innerText  = hrsLeft;
+  if(rcostEl) rcostEl.innerText = 'R ' + rcost.toLocaleString('en-ZA');
 }
 function saveEVData(mid){
   if(role!=='admin'){toast('⚠ Viewer access — changes not saved');return;}
@@ -2236,11 +2243,16 @@ function saveEVData(mid){
     hrsOverride: (function(){const v=document.getElementById('ev-hrs-'+mid)?.value; return v!==''&&v!==null?parseFloat(v):null;})()
   };
   // ── Compute total spend: Labour Cost + Non-labour Actual ──
-  const hrsUsed = (function(){
+  // FIX: use the typed/override hours (d.hrsOverride), NOT raw Task Entry hours,
+  // so what you see in the input matches what gets calculated and saved.
+  const BUDGET_HRS = 443;
+  const hrsForCalc = (function(){
     const m=machines.find(x=>x.id===mid);
-    return m?m.hrsUsed||0:0;
+    return (d.hrsOverride!=null) ? d.hrsOverride : (m?m.hrsUsed||0:0);
   })();
-  const labourCost = Math.round((d.labourRate||0) * hrsUsed);
+  const hrsLeft = Math.max(0, BUDGET_HRS - hrsForCalc);
+  const labourCost = Math.round((d.labourRate||0) * hrsForCalc);
+  const remainingCost = Math.round((d.labourRate||0) * hrsLeft);
   const totalSpend = Math.round((d.actualUsed||0) + labourCost);
   d._labourCost  = labourCost;
   d._totalSpend  = totalSpend;
@@ -2259,14 +2271,17 @@ function saveEVData(mid){
   const lcEl=document.getElementById('ev-lc-'+mid);
   const tsEl=document.getElementById('ev-ts-'+mid);
   const trEl=document.getElementById('ev-tr-'+mid);
+  const hremEl=document.getElementById('ev-hrem-'+mid);
+  const rcostEl=document.getElementById('ev-rcost-'+mid);
   if(lcEl) lcEl.innerText='R '+labourCost.toLocaleString('en-ZA');
   if(tsEl) tsEl.innerText='R '+totalSpend.toLocaleString('en-ZA');
+  if(hremEl) hremEl.innerText=hrsLeft;
+  if(rcostEl) rcostEl.innerText='R '+remainingCost.toLocaleString('en-ZA');
   if(trEl){
     const rem=Math.max(0,(d.budgetCost||6000000)-totalSpend);
     trEl.innerText='R '+rem.toLocaleString('en-ZA');
   }
   // Update auto-calc display fields without re-rendering the whole card
-  const BUDGET_HRS=443;
   const m=machines.find(x=>x.id===mid);
   const actualHrs=m?Math.round(m.hrsUsed*10)/10:0;
   const evUsedDays=d.usedDays||0;
@@ -2378,10 +2393,27 @@ function renderEV(){
           <input type="number" class="ev-input editable" id="ev-lr-${m.id}" value="${ev.labourRate||''}" min="0" step="50" placeholder="e.g. 1000" style="width:80px;border-color:var(--cyan,#00D4FF);color:var(--cyan,#00D4FF);padding:4px 8px;font-size:11px;" oninput="recalcLabour('${m.id}')" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""}>
           <span style="font-size:9px;color:var(--muted);">per hour</span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <span style="font-size:9px;color:var(--muted);min-width:115px;">Labour cost — auto</span>
-          <span id="ev-lc-${m.id}" style="font-weight:700;color:var(--gold);font-size:12px;">R ${((ev.labourRate||0)*(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})()).toLocaleString('en-ZA')}</span>
+
+        <div style="border-top:1px dashed rgba(0,200,150,0.2);margin:9px 0;"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:9px;">
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;">
+            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Hrs Still To Use</div>
+            <div id="ev-hrem-${m.id}" style="font-size:13px;font-weight:800;color:var(--cyan,#00D4FF);">${(function(){const hrs=(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})());return Math.max(0,443-hrs);})()}</div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">443 planned − used</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;">
+            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Current Labour Cost</div>
+            <div id="ev-lc-${m.id}" style="font-size:13px;font-weight:800;color:var(--gold);">R ${((ev.labourRate||0)*(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})())).toLocaleString('en-ZA')}</div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">hrs used × rate</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;">
+            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Remaining Cost</div>
+            <div id="ev-rcost-${m.id}" style="font-size:13px;font-weight:800;color:var(--green);">R ${((ev.labourRate||0)*Math.max(0,443-(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})()))).toLocaleString('en-ZA')}</div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">hrs left × rate</div>
+          </div>
         </div>
+
         <div style="border-top:1px dashed rgba(0,200,150,0.2);margin:8px 0;"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;">
           <div>
@@ -2389,7 +2421,7 @@ function renderEV(){
             <div style="font-size:8.5px;color:var(--muted);margin-top:2px;">Labour cost + Items / Products purchased → auto-updates Fleet Overview</div>
           </div>
           <div style="text-align:right;">
-            <div id="ev-ts-${m.id}" style="font-size:14px;font-weight:700;color:var(--red);">R ${(((ev.labourRate||0)*(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})())+(ev.actualUsed||0)).toLocaleString('en-ZA')}</div>
+            <div id="ev-ts-${m.id}" style="font-size:14px;font-weight:700;color:var(--red);">R ${(((ev.labourRate||0)*(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})()))+(ev.actualUsed||0)).toLocaleString('en-ZA')}</div>
             <div style="font-size:8px;color:var(--muted);margin-top:1px;">auto-calculated</div>
           </div>
         </div>
