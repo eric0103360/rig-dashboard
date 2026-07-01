@@ -931,6 +931,32 @@ function login(){
     cloudLoad().then(loaded=>{
       if(loaded) toast('✓ Cloud data loaded');
       machines=loadMachines();
+      // If no machines in localStorage, use defaults and trigger a cloud save
+      if(!machines||!machines.length){
+        machines=loadMachines(); // loadMachines has built-in defaults
+        if(!machines||!machines.length){
+          // Force default machines
+          const def=[
+            {id:'DK003',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK004',status:'active',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK005',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK006',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK007',status:'active',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK008',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK009',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK010',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK011',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK012',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK013',status:'active',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK014',status:'active',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK015',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK016',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+            {id:'DK017',status:'planned',budget:6000000,hrsUsed:0,budgetUsed:0},
+          ];
+          machines=def;
+          localStorage.setItem('emsv4',JSON.stringify(machines));
+        }
+      }
       renderFleet();
     });
   } else {
@@ -1441,10 +1467,11 @@ function renderRebuildSummary(){
   function daysUsedFn(s){if(!s)return 0;const sd=new Date(s);if(isNaN(sd))return 0;return Math.max(0,Math.round((now-sd)/(864e5)));}
   function daysRemFn(e){if(!e)return null;const ed=new Date(e);if(isNaN(ed))return null;return Math.max(0,Math.round((ed-now)/(864e5)));}
 
-  // Dynamic — shows any rig with EV data entered (budgetDays or budgetCost saved)
+  // Dynamic — shows active rigs OR any rig with EV data entered
   const allRigs=machines.map(m=>m.id).filter(id=>{
+    const m=machines.find(x=>x.id===id);
     const ev=typeof getEVData==='function'?getEVData(id):null;
-    return ev&&(ev.budgetDays>0||ev.budgetCost>6000000||ev.actualUsed>0||ev.usedDays>0);
+    return m&&(m.status==='active'||m.hrsUsed>0||(ev&&(ev.budgetDays>0||ev.actualUsed>0||ev.usedDays>0)));
   });
   if(!allRigs.length){
     el.innerHTML='<div style="padding:16px;font-size:11px;color:var(--muted);text-align:center;">No EV data entered yet. Go to Earned Value (EV) & Days tab to add rig data.</div>';
@@ -1455,7 +1482,7 @@ function renderRebuildSummary(){
   const rows=allRigs.map(id=>{
     const m=machines.find(x=>x.id===id);
     const ev=typeof getEVData==='function'?getEVData(id):{labourBudget:550000,planStart:'',planEnd:'',actStart:'',daysAllocated:0,budgetCost:6000000,balanceOverride:0};
-    const BUDGET_HRS=443;
+    const BUDGET_HRS=ev.planHrs||443;
     const budgetDays=ev.budgetDays||0;
     const actualHrs=m?Math.round(m.hrsUsed*10)/10:0;
     // Auto-calculate used days from actual hours ÷ 9hrs/day
@@ -1496,7 +1523,7 @@ function renderRebuildSummary(){
 
     return `<tr style="border-bottom:1px solid var(--border);">
       <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">${id}</td>
-      <td style="padding:8px 8px;text-align:center;font-size:11px;">443</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">${ev.planHrs||443}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">${actualHrs}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${budgetDays||0}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${usedDays||0}</td>
@@ -1563,7 +1590,7 @@ function renderFleet(){
     const lc=Math.round((evR.labourRate||0)*hrsK);
     return s+((evR._totalSpend)||Math.round((evR.actualUsed||0)+lc));
   },0);
-  const th=machines.reduce((s,m)=>s+m.totalHrs,0),uh=machines.reduce((s,m)=>s+m.hrsUsed,0);
+  const th=machines.reduce((s,m)=>{const evR=JSON.parse(localStorage.getItem('ev_'+m.id)||'{}');return s+(evR.planHrs||443);},0),uh=machines.reduce((s,m)=>s+m.hrsUsed,0);
   const ac=machines.filter(m=>m.status==="active"&&m.hrsUsed>0).length,dc2=machines.filter(m=>m.status==="complete").length;
   document.getElementById("fleet-kpis").innerHTML=`
     <div class="kpi r"><div class="kl">ACTUAL</div><div class="kv r">${fmtM(ub)}</div><div class="ks">${pct(ub,tb)}% of R${(tb/1e6).toFixed(0)}M fleet budget</div></div>
@@ -2217,7 +2244,9 @@ function recalcLabour(mid){
   const bal = parseFloat(balEl?.value||0);
   const bc  = parseFloat(bcEl?.value||6000000);
 
-  const BUDGET_HRS = 443;
+  // Use per-rig planned hours from EV if available, else 443
+  const evForRig = (function(){try{const k='ev_'+mid;const d=localStorage.getItem(k);return d?JSON.parse(d):{};} catch(e){return {};}})();
+  const BUDGET_HRS = evForRig.planHrs || 443;
   const hrsLeft = Math.max(0, BUDGET_HRS - hrs);
   const lc      = Math.round(lr * hrs);
   const rcost   = Math.round(lr * hrsLeft);
@@ -2230,9 +2259,10 @@ function recalcLabour(mid){
   if(hremEl)  hremEl.innerText  = hrsLeft;
   if(rcostEl) rcostEl.innerText = 'R ' + rcost.toLocaleString('en-ZA');
 }
-function saveEVData(mid){
+async function saveEVData(mid){
   if(role!=='admin'){toast('⚠ Viewer access — changes not saved');return;}
   const d = {
+    planHrs:    parseFloat(document.getElementById('ev-ph-'+mid)?.value||443),
     budgetDays: parseFloat(document.getElementById('ev-bd-'+mid)?.value||0),
     usedDays:   parseFloat(document.getElementById('ev-ud-'+mid)?.value||0),
     budgetCost: parseFloat(document.getElementById('ev-bc-'+mid)?.value||6000000),
@@ -2245,7 +2275,7 @@ function saveEVData(mid){
   // ── Compute total spend: Labour Cost + Non-labour Actual ──
   // FIX: use the typed/override hours (d.hrsOverride), NOT raw Task Entry hours,
   // so what you see in the input matches what gets calculated and saved.
-  const BUDGET_HRS = 443;
+  const BUDGET_HRS = d.planHrs || 443;
   const hrsForCalc = (function(){
     const m=machines.find(x=>x.id===mid);
     return (d.hrsOverride!=null) ? d.hrsOverride : (m?m.hrsUsed||0:0);
@@ -2258,15 +2288,25 @@ function saveEVData(mid){
   d._totalSpend  = totalSpend;
   localStorage.setItem('ev_'+mid, JSON.stringify(d));
   updateEVRemaining(mid);
-  // ── Sync totalSpend → Data Entry (budgetUsed) and EV display ──
+  // ── Sync totalSpend + hrsUsed → machines so Fleet Overview updates ──
   const mIdx=machines.findIndex(x=>x.id===mid);
   if(mIdx>=0){
     machines[mIdx].budgetUsed = totalSpend;
+    machines[mIdx].hrsUsed    = hrsForCalc;
     if(d.notes!==undefined)  machines[mIdx].notes  = d.notes;
     if(d.status)             machines[mIdx].status = d.status;
     if(d.budgetCost)         machines[mIdx].budget = d.budgetCost;
     localStorage.setItem('emsv4',JSON.stringify(machines));
   }
+  // Also sync to Firebase so all devices see updated hours in Fleet Overview
+  try {
+    if(db) await db.collection('ems_machines').doc(mid).set({
+      hrsUsed:    hrsForCalc,
+      budgetUsed: totalSpend,
+      status:     d.status||'planned',
+      budget:     d.budgetCost||6000000
+    },{merge:true});
+  } catch(e){ console.log('Machine sync skipped:',e.message); }
   // Refresh labour cost display fields live
   const lcEl=document.getElementById('ev-lc-'+mid);
   const tsEl=document.getElementById('ev-ts-'+mid);
@@ -2358,6 +2398,10 @@ function renderEV(){
       </div>
 
       <div class="ev-grid">
+        <div class="ev-field">
+          <div class="ev-label">Planned Hours ✏ <span style="font-size:8px;color:var(--cyan,#00D4FF)">(default 443)</span></div>
+          <input type="number" class="ev-input editable" id="ev-ph-${m.id}" value="${ev.planHrs||443}" min="1" step="1" placeholder="443" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""} style="border-color:var(--cyan,#00D4FF);color:var(--cyan,#00D4FF);">
+        </div>
         <div class="ev-field">
           <div class="ev-label">Planned days ✏</div>
           <input type="number" class="ev-input editable" id="ev-bd-${m.id}" value="${ev.budgetDays||''}" min="0" step="1" placeholder="e.g. 71" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""} >
@@ -2577,7 +2621,7 @@ function renderBudget(){
     const lc=Math.round((evR.labourRate||0)*hrsK);
     return s+((evR._totalSpend)||Math.round((evR.actualUsed||0)+lc));
   },0);
-  const th=machines.reduce((s,m)=>s+m.totalHrs,0),uh=machines.reduce((s,m)=>s+m.hrsUsed,0);
+  const th=machines.reduce((s,m)=>{const evR=JSON.parse(localStorage.getItem('ev_'+m.id)||'{}');return s+(evR.planHrs||443);},0),uh=machines.reduce((s,m)=>s+m.hrsUsed,0);
   const bovEl=document.getElementById("bov");
   if(bovEl) bovEl.innerHTML=`
     <div class="bc" style="border-top:2px solid var(--gold);"><div style="font-size:9px;color:var(--muted);margin-bottom:3px;">TOTAL FLEET BUDGET</div><div style="font-size:22px;font-weight:800;color:var(--gold);">${fmtM(tb)}</div><div style="font-size:9px;color:var(--muted);margin-top:2px;">15 machines × R 6M each</div></div>
