@@ -2298,6 +2298,13 @@ async function saveEVData(mid){
     if(d.budgetCost)         machines[mIdx].budget = d.budgetCost;
     localStorage.setItem('emsv4',JSON.stringify(machines));
   }
+  // Write hrs override so loadMachines() picks it up on next render
+  // loadMachines() always reads hrs_override_ first (line 1345-1346)
+  if(d.hrsOverride!=null){
+    localStorage.setItem('hrs_override_'+mid, String(hrsForCalc));
+  } else {
+    localStorage.removeItem('hrs_override_'+mid);
+  }
   // Also sync to Firebase so all devices see updated hours in Fleet Overview
   try {
     if(db) await db.collection('ems_machines').doc(mid).set({
@@ -2349,6 +2356,7 @@ async function saveEVData(mid){
         </span>
       </div>`;
   }
+  machines = loadMachines(); // reload so hrsUsed picks up hrs_override_ changes
   renderRebuildSummary();
   // Also refresh fleet charts to update labour % chart
   if(typeof renderFleetCharts==='function') setTimeout(renderFleetCharts,50);
