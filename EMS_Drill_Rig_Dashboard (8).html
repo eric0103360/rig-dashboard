@@ -1342,8 +1342,17 @@ function loadMachines(){
     const ph=getPH(m.id);
     const dk=getDK(m.id);
     m.phases=calcPhases(td,ph,dk);
-    const ov=localStorage.getItem("hrs_override_"+m.id);
-    m.hrsUsed=(ov!==null)?parseFloat(ov):calcUsed(td,ph);
+    // hrsUsed: EV & Days override is master — Task Entry is secondary only
+    // Read EV data directly from localStorage (getEVData not yet defined at this point)
+    const evRaw=JSON.parse(localStorage.getItem("ev_"+m.id)||"{}");
+    const ovVal=localStorage.getItem("hrs_override_"+m.id);
+    if(evRaw.hrsOverride!=null){
+      m.hrsUsed=evRaw.hrsOverride; // EV & Days is master
+    } else if(ovVal!==null){
+      m.hrsUsed=parseFloat(ovVal);
+    } else {
+      m.hrsUsed=calcUsed(td,ph); // fall back to Task Entry
+    }
     // Fix corrupted status: if marked complete but has 0 actual hours, revert to default
     if(m.status==="complete" && m.hrsUsed===0){
       m.status=def.status;
@@ -1448,9 +1457,16 @@ function syncMachinesLive(){
   machines.forEach(m=>{
     const td=getTD(m.id),ph=getPH(m.id),dk=getDK(m.id);
     m.phases=calcPhases(td,ph,dk);
-    // Use manual override if set, otherwise calculate from tasks
-    const ov=localStorage.getItem("hrs_override_"+m.id);
-    m.hrsUsed=(ov!==null)?parseFloat(ov):calcUsed(td,ph);
+    // hrsUsed: EV & Days override is master — Task Entry is secondary only
+    const evRaw2=JSON.parse(localStorage.getItem("ev_"+m.id)||"{}");
+    const ovVal2=localStorage.getItem("hrs_override_"+m.id);
+    if(evRaw2.hrsOverride!=null){
+      m.hrsUsed=evRaw2.hrsOverride;
+    } else if(ovVal2!==null){
+      m.hrsUsed=parseFloat(ovVal2);
+    } else {
+      m.hrsUsed=calcUsed(td,ph);
+    }
     const def=DM.find(x=>x.id===m.id);
     if(m.status==="complete" && m.hrsUsed===0 && def) m.status=def.status;
   });
@@ -2836,8 +2852,11 @@ function saveTasks(){
     td[t.id]=parseFloat(el?.value||0);
   }));
   localStorage.setItem("td_"+mid,JSON.stringify(td));
-  // Clear hrs_override so task entry hours drive the display
-  localStorage.removeItem("hrs_override_"+mid);
+  // Only clear hrs_override if EV & Days has no manual override set
+  const evCheck=getEVData(mid);
+  if(evCheck.hrsOverride===null||evCheck.hrsOverride===undefined){
+    localStorage.removeItem("hrs_override_"+mid);
+  }
   // Immediately update machine hrsUsed in emsv4 from task data
   syncMachinesLive();
   const mIdx=machines.findIndex(x=>x.id===mid);
@@ -2864,30 +2883,9 @@ function saveTasks(){
     }
   }
   machines=loadMachines();
-  // ── Auto-cascade: recalculate Labour Cost + Total Spend when hours change ──
-  (function(){
-    const ev=getEVData(mid);
-    const m2=machines.find(x=>x.id===mid);
-    if(!m2||!ev.labourRate) return;
-    const hrs=m2.hrsUsed||0;
-    const lc=Math.round((ev.labourRate||0)*hrs);
-    const total=Math.round((ev.actualUsed||0)+lc);
-    ev._labourCost=lc;
-    ev._totalSpend=total;
-    localStorage.setItem('ev_'+mid,JSON.stringify(ev));
-    const mIdx2=machines.findIndex(x=>x.id===mid);
-    if(mIdx2>=0){
-      machines[mIdx2].budgetUsed=total;
-      localStorage.setItem('emsv4',JSON.stringify(machines));
-    }
-    const lcEl=document.getElementById('ev-lc-'+mid);
-    const tsEl=document.getElementById('ev-ts-'+mid);
-    const remEl=document.getElementById('ev-rem-'+mid);
-    if(lcEl) lcEl.innerText='R '+lc.toLocaleString('en-ZA');
-    if(tsEl) tsEl.innerText='R '+total.toLocaleString('en-ZA');
-    if(remEl) remEl.value=Math.max(0,(ev.budgetCost||6000000)-total);
-  })();
   loadTasks();
+  // Save to Firebase cloud
+  if(typeof cloudSave==='function') cloudSave();
   toast("✓ "+mid+" saved — hours & spend updated");
 }
 
