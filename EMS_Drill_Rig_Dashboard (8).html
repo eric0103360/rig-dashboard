@@ -851,12 +851,11 @@ const FB_CONFIG = {
 let db;
 function initFirebase(){
   try {
-    if(typeof firebase === 'undefined') { console.error('Firebase not loaded'); return false; }
+    if(typeof firebase === 'undefined') return false; // Scripts not yet loaded — silent
     if(!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
     db = firebase.firestore();
-    console.log('✓ Firebase initialized');
     return true;
-  } catch(e){ console.error('Firebase init failed:',e); return false; }
+  } catch(e){ return false; }
 }
 const EMS_DOC = 'ems-sandvik-tracker';
 const EMS_COLL = 'ems_data';
@@ -1763,19 +1762,21 @@ function renderFleetCharts(){
         <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Remaining to complete</span>
       </div>`+
       sumRigs.map((m,i)=>{
-        const rem=labourPcts[i]; // remaining %
-        const con=100-rem;       // consumed %
+        const rem=labourPcts[i];
+        const con=100-rem;
         const isComplete=m.status==='complete';
-        const conCol=isComplete?'#1D9E75':'#E24B4A';
-        const label=isComplete?'&#10003; Complete':'';
+        // Complete rigs show 100% green — no red
+        const displayCon=isComplete?0:con;
+        const displayRem=isComplete?100:rem;
+        const conCol='#E24B4A';
         return `<div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
             <span style="font-size:11px;font-weight:700;color:${isComplete?'var(--green)':'var(--gold)'};">${m.id}${isComplete?' <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span>':''}</span>
-            <span style="font-size:10px;color:var(--muted);">${con}% used · ${rem}% remaining</span>
+            <span style="font-size:10px;color:var(--muted);">${isComplete?'&#10003; Build complete':con+'% used · '+rem+'% remaining'}</span>
           </div>
           <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
-            ${con>0?'<div style="width:'+con+'%;background:'+conCol+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(con>8?con+'%':'')+'</span></div>':''}
-            ${rem>0?'<div style="width:'+rem+'%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(rem>8?rem+'%':'')+'</span></div>':''}
+            ${displayCon>0?'<div style="width:'+displayCon+'%;background:'+conCol+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(displayCon>8?displayCon+'%':'')+'</span></div>':''}
+            ${displayRem>0?'<div style="width:'+displayRem+'%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(isComplete?'&#10003; Done':displayRem>8?displayRem+'%':'')+'</span></div>':''}
           </div>
         </div>`;
       }).join('');
@@ -1793,22 +1794,21 @@ function renderFleetCharts(){
         const ev=typeof getEVData==='function'?getEVData(m.id):{budgetCost:6000000,balance:0};
         const bc=ev.budgetCost||6000000;
         const au=ev.actualUsed||0;
+        const isComplete=m.status==='complete';
         const pctUsed=bc>0&&au>0?Math.min(Math.round(au/bc*1000)/10,100):0;
         const pctRem=Math.max(0,Math.round((100-pctUsed)*10)/10);
         const consumed=Math.round(au);
         const remaining=Math.round(bc-au);
+        // Complete: show actual used as green, remaining as lighter green
+        const usedCol=isComplete?'#1D9E75':'#E24B4A';
         return `<div style="margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-size:11px;font-weight:700;color:var(--gold);">${m.id}</span>
-            <span style="font-size:10px;color:var(--muted);">R ${consumed.toLocaleString('en-ZA')} used · R ${remaining.toLocaleString('en-ZA')} remaining</span>
+            <span style="font-size:11px;font-weight:700;color:${isComplete?'var(--green)':'var(--gold)'};">${m.id}${isComplete?' <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span>':''}</span>
+            <span style="font-size:10px;color:var(--muted);">R ${consumed.toLocaleString('en-ZA')} used · R ${remaining.toLocaleString('en-ZA')} ${isComplete?'saved':'remaining'}</span>
           </div>
           <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
-            ${pctUsed>0?`<div style="width:${pctUsed}%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
-              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">${pctUsed>8?pctUsed+'%':''}</span>
-            </div>`:''}
-            ${pctRem>0?`<div style="width:${pctRem}%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
-              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">${pctRem>8?pctRem+'%':''}</span>
-            </div>`:''}
+            ${pctUsed>0?'<div style="width:'+pctUsed+'%;background:'+usedCol+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(pctUsed>8?pctUsed+'%':'')+'</span></div>':''}
+            ${pctRem>0?'<div style="width:'+pctRem+'%;background:'+(isComplete?'rgba(0,200,150,0.35)':'#1D9E75')+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(pctRem>8?pctRem+'%':'')+'</span></div>':''}
           </div>
         </div>`;
       }).join('');
@@ -3435,6 +3435,8 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementB
   const DATA_URL='https://eric0103360.github.io/rig-dashboard/ems-data.json';
   // Always show login screen — no auto-login
   // This prevents admin session from leaking to other users
+  // Try to init Firebase on page load (scripts should be ready by now)
+  setTimeout(function(){ initFirebase(); }, 500);
   console.log('EMS Tracker ready — please sign in');
 })();
 
