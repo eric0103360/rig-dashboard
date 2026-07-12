@@ -2709,6 +2709,8 @@ function renderPerformance(){
     const status=m.status||'planned';
     const isComplete=status==='complete';
     const statusCol=isComplete?'var(--green)':status==='active'?'var(--gold)':'var(--muted)';
+    const isOver=(hrsUsed>planHrs)||(usedDays>planDays&&planDays>0);
+    const isOnPlan=!isOver&&hrsSaved===0&&daysSaved===0;
     const isAhead=hrsSaved>0||daysSaved>0;
     const pctUnderTime=planDays>0?Math.round(daysSaved/planDays*100):0;
 
@@ -2735,7 +2737,7 @@ function renderPerformance(){
         <span style="font-size:14px;font-weight:800;color:var(--gold);">${m.id}</span>
         <div style="display:flex;gap:8px;align-items:center;">
           <span style="font-size:9px;padding:2px 8px;border-radius:3px;font-weight:700;background:rgba(0,0,0,0.3);color:${statusCol};border:1px solid ${statusCol};">${status.toUpperCase()}</span>
-          <span style="font-size:10px;font-weight:700;color:${isAhead?'var(--green)':'var(--red)'};">${isComplete?'✓ COMPLETE':isAhead?'✓ AHEAD OF PLAN':'⚠ OVER PLAN'}</span>
+          <span style="font-size:10px;font-weight:700;color:${isAhead?'var(--green)':'var(--red)'};">${isComplete?'✓ COMPLETE':isAhead?'✓ AHEAD OF PLAN':isOnPlan?'✓ ON PLAN':'⚠ OVER PLAN'}</span>
         </div>
       </div>
       ${completionBanner}
