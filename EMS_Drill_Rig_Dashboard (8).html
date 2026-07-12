@@ -1765,18 +1765,17 @@ function renderFleetCharts(){
       sumRigs.map((m,i)=>{
         const rem=labourPcts[i]; // remaining %
         const con=100-rem;       // consumed %
+        const isComplete=m.status==='complete';
+        const conCol=isComplete?'#1D9E75':'#E24B4A';
+        const label=isComplete?'&#10003; Complete':'';
         return `<div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:11px;font-weight:700;color:var(--gold);">${m.id}</span>
+            <span style="font-size:11px;font-weight:700;color:${isComplete?'var(--green)':'var(--gold)'};">${m.id}${isComplete?' <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span>':''}</span>
             <span style="font-size:10px;color:var(--muted);">${con}% used · ${rem}% remaining</span>
           </div>
           <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
-            ${con>0?`<div style="width:${con}%;background:#E24B4A;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
-              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">${con>8?con+'%':''}</span>
-            </div>`:''}
-            ${rem>0?`<div style="width:${rem}%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;">
-              <span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">${rem>8?rem+'%':''}</span>
-            </div>`:''}
+            ${con>0?'<div style="width:'+con+'%;background:'+conCol+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(con>8?con+'%':'')+'</span></div>':''}
+            ${rem>0?'<div style="width:'+rem+'%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(rem>8?rem+'%':'')+'</span></div>':''}
           </div>
         </div>`;
       }).join('');
@@ -2648,15 +2647,25 @@ function renderEfficiency(){
 function renderBPM(){
   return machines.map(m=>{
     const bp=pct(m.budgetUsed,m.budget),hp=Math.min(Math.round(m.hrsUsed/441*1000)/10,100);
-    const rc=bp>90?"var(--red)":bp>70?"var(--gold)":"var(--gold)";
+    const isComplete=m.status==='complete';
+    const rc=isComplete?'var(--green)':bp>90?'var(--red)':bp>70?'var(--gold)':'var(--gold)';
+    const nameCol=isComplete?'var(--green)':'var(--gold)';
+    const evR=JSON.parse(localStorage.getItem('ev_'+m.id)||'{}');
+    const planHrs=evR.planHrs||441;
+    const hrsLeft=Math.round(Math.max(0,planHrs-m.hrsUsed)*10)/10;
     return`<div class="bpmc" style="border-left:3px solid ${rc};">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:800;color:var(--gold);">${m.id}</span><span class="badge ${SB[m.status]}">${SL[m.status]}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">${fmt(m.budget)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:${nameCol};">${m.id}</span>
+        <span class="badge ${SB[m.status]}">${SL[m.status]}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:${nameCol};font-weight:700;">${fmt(m.budget)}</span></div>
       <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:${bp}%;background:${rc};"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: ${fmt(m.budgetUsed)}</span><span style="color:${rc};font-weight:700;">${bp}%</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">${m.hrsUsed} / 441h</span></div>
-      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:${hp}%;background:var(--gold);opacity:0.7;"></div></div>
-      <div style="font-size:9px;color:var(--green);margin-top:2px;">Rem: ${fmt(m.budget-m.budgetUsed)} · ${Math.round(Math.max(0,(JSON.parse(localStorage.getItem("ev_"+m.id)||"{}").planHrs||441)-m.hrsUsed)*10)/10}h left</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:${nameCol};font-weight:700;">${m.hrsUsed} / ${planHrs}h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:${hp}%;background:${isComplete?'var(--green)':'var(--gold)'};opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:${isComplete?'var(--green)':'var(--green)'};margin-top:2px;">
+        ${isComplete?'&#10003; Complete — '+fmt(Math.max(0,m.budget-m.budgetUsed))+' saved':'Rem: '+fmt(m.budget-m.budgetUsed)+' · '+hrsLeft+'h left'}
+      </div>
     </div>`;
   }).join("");
 }
