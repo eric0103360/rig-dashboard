@@ -2737,7 +2737,7 @@ function renderPerformance(){
         <span style="font-size:14px;font-weight:800;color:var(--gold);">${m.id}</span>
         <div style="display:flex;gap:8px;align-items:center;">
           <span style="font-size:9px;padding:2px 8px;border-radius:3px;font-weight:700;background:rgba(0,0,0,0.3);color:${statusCol};border:1px solid ${statusCol};">${status.toUpperCase()}</span>
-          <span style="font-size:10px;font-weight:700;color:${isAhead?'var(--green)':'var(--red)'};">${isComplete?'✓ COMPLETE':isAhead?'✓ AHEAD OF PLAN':isOnPlan?'✓ ON PLAN':'⚠ OVER PLAN'}</span>
+          <span style="font-size:10px;font-weight:700;color:${(isComplete||isAhead||isOnPlan)?'var(--green)':'var(--red)'};">${isComplete?'✓ COMPLETE':isAhead?'✓ AHEAD OF PLAN':isOnPlan?'✓ ON PLAN':'⚠ OVER PLAN'}</span>
         </div>
       </div>
       ${completionBanner}
@@ -2746,7 +2746,7 @@ function renderPerformance(){
         <div style="margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
             <span style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Hours</span>
-            <span style="font-size:9px;color:${hrsSaved>0?'var(--green)':'var(--red)'};font-weight:700;">${hrsSaved>0?'▼ '+hrsSaved+' hrs saved':'▲ '+(hrsUsed-planHrs)+' hrs over'}</span>
+            <span style="font-size:9px;color:${(isComplete&&hrsSaved>=0)||hrsSaved>0?'var(--green)':isOnPlan?'var(--green)':'var(--red)'};font-weight:700;">${hrsSaved>0?'▼ '+hrsSaved+' hrs saved':isOnPlan||isComplete?'✓ On plan':'▲ '+(hrsUsed-planHrs)+' hrs over'}</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
             <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;text-align:center;">
@@ -2767,7 +2767,7 @@ function renderPerformance(){
           </div>
           <!-- Hours progress bar -->
           <div style="margin-top:6px;background:var(--bg4);border-radius:3px;height:6px;overflow:hidden;">
-            <div style="width:${hrsPct}%;height:100%;background:${hrsPct>=80?'var(--red)':hrsPct>=50?'var(--gold)':'var(--green)'};border-radius:3px;transition:width 0.5s;"></div>
+            <div style="width:${hrsPct}%;height:100%;background:${isComplete?'var(--green)':hrsPct>=80?'var(--red)':hrsPct>=50?'var(--gold)':'var(--green)'};border-radius:3px;transition:width 0.5s;"></div>
           </div>
           <div style="font-size:8px;color:var(--muted);margin-top:2px;">${hrsPct}% of planned hours used</div>
         </div>
@@ -2776,7 +2776,7 @@ function renderPerformance(){
         <div style="margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
             <span style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Days</span>
-            <span style="font-size:9px;color:${daysSaved>0?'var(--green)':'var(--red)'};font-weight:700;">${daysSaved>0?'▼ '+daysSaved+' days saved':'▲ '+(usedDays-planDays)+' days over'}</span>
+            <span style="font-size:9px;color:${(isComplete&&daysSaved>=0)||daysSaved>0?'var(--green)':isOnPlan?'var(--green)':'var(--red)'};font-weight:700;">${daysSaved>0?'▼ '+daysSaved+' days saved':isOnPlan||isComplete?'✓ On plan':'▲ '+(usedDays-planDays)+' days over'}</span>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
             <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;text-align:center;">
@@ -2789,15 +2789,15 @@ function renderPerformance(){
               <div style="font-size:16px;font-weight:800;color:var(--gold);">${usedDays||'—'}</div>
               <div style="font-size:8px;color:var(--muted);">days</div>
             </div>
-            <div style="background:var(--bg);border:1px solid ${daysSaved>0?'var(--green)':'var(--red)'};border-radius:5px;padding:8px;text-align:center;">
+            <div style="background:var(--bg);border:1px solid ${(daysSaved>0||isComplete||isOnPlan)?'var(--green)':'var(--red)'};border-radius:5px;padding:8px;text-align:center;">
               <div style="font-size:8px;color:var(--muted);margin-bottom:3px;">${daysSaved>0?'SAVED':'OVER'}</div>
-              <div style="font-size:16px;font-weight:800;color:${daysSaved>0?'var(--green)':'var(--red)'};">${Math.abs(daysSaved)||'—'}</div>
+              <div style="font-size:16px;font-weight:800;color:${(daysSaved>0||isComplete||isOnPlan)?'var(--green)':'var(--red)'};">${Math.abs(daysSaved)||'—'}</div>
               <div style="font-size:8px;color:var(--muted);">days</div>
             </div>
           </div>
           <!-- Days progress bar -->
           <div style="margin-top:6px;background:var(--bg4);border-radius:3px;height:6px;overflow:hidden;">
-            <div style="width:${daysPct}%;height:100%;background:${daysPct>=80?'var(--red)':daysPct>=50?'var(--gold)':'var(--green)'};border-radius:3px;transition:width 0.5s;"></div>
+            <div style="width:${daysPct}%;height:100%;background:${isComplete?'var(--green)':daysPct>=80?'var(--red)':daysPct>=50?'var(--gold)':'var(--green)'};border-radius:3px;transition:width 0.5s;"></div>
           </div>
           <div style="font-size:8px;color:var(--muted);margin-top:2px;">${daysPct}% of planned days used</div>
         </div>
