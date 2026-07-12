@@ -575,7 +575,7 @@ input:focus,select:focus{border-color:var(--gold);}
   <div style="font-size:9px;color:var(--muted);margin-bottom:10px;">Labour budget per rig = R550,000 (editable). Earned value = Build % × budget. Remaining = what is still to be consumed as build progresses. Build % comes from Task Entry actual hrs.</div>
   <div id="ev-rows-lc"></div>
   <div style="margin-top:16px;">
-    <button onclick="showAddMachine()" style="width:100%;padding:10px;background:transparent;border:2px dashed var(--gold);color:var(--gold);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;">+ ADD MACHINE TO BUILD</button>
+    <button onclick="toggleAddMachineForm()" style="width:100%;padding:10px;background:transparent;border:2px dashed var(--gold);color:var(--gold);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;">+ ADD MACHINE TO BUILD</button>
   </div>
   <div id="add-machine-form" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;">
     <div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:10px;letter-spacing:0.5px;">NEW MACHINE</div>
@@ -1497,10 +1497,16 @@ function renderRebuildSummary(){
   function daysRemFn(e){if(!e)return null;const ed=new Date(e);if(isNaN(ed))return null;return Math.max(0,Math.round((ed-now)/(864e5)));}
 
   // Dynamic — shows active rigs OR any rig with EV data entered
+  // Sort: active first, then complete, then planned
   const allRigs=machines.map(m=>m.id).filter(id=>{
     const m=machines.find(x=>x.id===id);
     const ev=typeof getEVData==='function'?getEVData(id):null;
-    return m&&(m.status==='active'||m.hrsUsed>0||(ev&&(ev.budgetDays>0||ev.actualUsed>0||ev.usedDays>0)));
+    return m&&(m.status==='active'||m.status==='complete'||m.hrsUsed>0||(ev&&(ev.budgetDays>0||ev.actualUsed>0||ev.usedDays>0)));
+  }).sort((a,b)=>{
+    const sa=machines.find(x=>x.id===a)?.status||'planned';
+    const sb=machines.find(x=>x.id===b)?.status||'planned';
+    const rank=s=>s==='active'?0:s==='complete'?1:2;
+    return rank(sa)-rank(sb);
   });
   if(!allRigs.length){
     el.innerHTML='<div style="padding:16px;font-size:11px;color:var(--muted);text-align:center;">No EV data entered yet. Go to Earned Value (EV) & Days tab to add rig data.</div>';
@@ -1539,6 +1545,9 @@ function renderRebuildSummary(){
     const remCol=remDays===null?'var(--muted)':remDays<=10?'var(--red)':remDays<=20?'var(--gold)':'var(--green)';
     const labCol=labourPct>=80?'var(--red)':labourPct>=60?'var(--gold)':'var(--cyan)';
 
+    const isComplete = m.status === 'complete';
+    const daysEarly = isComplete ? Math.max(0, budgetDays - usedDays) : 0;
+
     if(!hasData){
       return `<tr style="border-bottom:1px solid var(--border);opacity:0.45;">
         <td style="padding:7px 12px;font-weight:700;color:var(--muted);font-size:11px;">${id}</td>
@@ -1547,6 +1556,32 @@ function renderRebuildSummary(){
         <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);">0</td>
         <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);">0</td>
         <td colspan="3" style="padding:7px 8px;font-size:10px;color:var(--muted);text-align:center;">— enter data in EV &amp; Days tab —</td>
+      </tr>`;
+    }
+
+    if(isComplete){
+      return `<tr style="border-bottom:1px solid rgba(0,200,150,0.15);background:rgba(0,200,150,0.04);">
+        <td style="padding:8px 12px;font-size:11px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:700;color:var(--green);">${id}</span>
+            <span style="font-size:8px;padding:1px 6px;border-radius:3px;font-weight:700;background:rgba(0,200,150,0.15);color:var(--green);border:1px solid rgba(0,200,150,0.3);">COMPLETE</span>
+          </div>
+        </td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${ev.planHrs||441}</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--green);font-weight:700;">${actualHrs}</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${budgetDays||0}</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${usedDays||0}</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;">
+          <div style="color:var(--green);font-weight:700;font-size:10px;">✓ Done</div>
+          ${daysEarly>0?'<div style="font-size:8px;color:var(--green);">'+daysEarly+' days early</div>':''}
+        </td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${labourPct}% used</td>
+        <td style="padding:8px 8px;text-align:right;font-size:11px;">
+          <div style="font-size:9px;color:var(--red);">(R) ACTUAL</div>
+          <div style="color:var(--red);font-weight:700;font-size:12px;">${fmtR(actualUsed)}</div>
+          <div style="font-size:9px;color:var(--green);margin-top:2px;">(R) SAVED</div>
+          <div style="color:var(--green);font-weight:700;font-size:12px;">${fmtR(Math.max(0,budgetCost-actualUsed))}</div>
+        </td>
       </tr>`;
     }
 
@@ -1577,6 +1612,14 @@ function renderRebuildSummary(){
     </tr>`;
   }).join('');
 
+  // Insert divider between active and complete rigs
+  const hasComplete = allRigs.some(id=>machines.find(x=>x.id===id)?.status==='complete');
+  const hasActive = allRigs.some(id=>machines.find(x=>x.id===id)?.status==='active');
+  let finalRows = rows;
+  if(hasComplete && hasActive){
+    const divider = '<tr><td colspan="8" style="padding:0"><div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,200,150,0.06);border-top:1px dashed rgba(0,200,150,0.3);border-bottom:1px dashed rgba(0,200,150,0.3);"><span style="font-size:8.5px;color:var(--green);font-weight:700;letter-spacing:1px;">&#10003; COMPLETED BUILDS</span></div></td></tr>';
+    finalRows = rows.replace('<tr style="border-bottom:1px solid rgba(0,200,150,0.15)', divider+'<tr style="border-bottom:1px solid rgba(0,200,150,0.15)');
+  }
   el.innerHTML=`
   <div style="padding:9px 13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg3);">
     <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;">D25KS REBUILD UPDATE — ${month.toUpperCase()}</span>
@@ -1596,7 +1639,7 @@ function renderRebuildSummary(){
       <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);"><span style="color:var(--red)">(R) ACTUAL</span><br><span style="color:var(--green)">(R) REMAINING</span><br><span style="font-weight:400;font-size:8px;">% used · % remaining</span></th>
     </tr></thead>
     <tbody>
-      ${rows}
+      ${finalRows}
       <tr style="background:var(--bg2);border-top:2px solid var(--border);">
         <td colspan="5" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL FUNDS REQUIRED TO COMPLETE</td>
         <td style="padding:9px 12px;text-align:right;font-size:11px;">${fmtR(totalBudget)}</td>
@@ -2235,7 +2278,7 @@ function restoreData(event){
   // Reset input so same file can be selected again
   event.target.value='';
 }
-function showAddMachine(){
+function toggleAddMachineForm(){
   const form=document.getElementById('add-machine-form');
   if(form) form.style.display=form.style.display==='none'?'block':'none';
 }
@@ -2715,24 +2758,24 @@ function renderPerformance(){
     const pctUnderTime=planDays>0?Math.round(daysSaved/planDays*100):0;
 
     // Completion banner — only shows when status = Complete
-    const completionBanner = isComplete ? `
-      <div style="background:rgba(0,200,150,0.08);border-left:4px solid var(--green);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <div>
-          <div style="font-size:12px;font-weight:700;color:var(--green);">✓ BUILD COMPLETE — AHEAD OF SCHEDULE</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:3px;">${hrsSaved} hours and ${daysSaved} days saved vs original plan</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:22px;font-weight:800;color:var(--green);">${pctUnderTime}%</div>
-          <div style="font-size:9px;color:var(--muted);">under time budget</div>
-        </div>
-      </div>` : `
-      <div style="background:rgba(245,168,0,0.06);border-left:4px solid var(--gold);padding:10px 14px;">
-        <div style="font-size:11px;font-weight:700;color:var(--gold);">IN PROGRESS — ${hrsPct}% complete</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px;">${hrsUsed} of ${planHrs} planned hours used · ${hrsSaved} hours remaining</div>
-      </div>`;
+    const completionBanner = isComplete ?
+      '<div style="background:rgba(0,200,150,0.08);border-left:4px solid var(--green);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">'+
+        '<div>'+
+          '<div style="font-size:12px;font-weight:700;color:var(--green);">&#10003; BUILD COMPLETE — AHEAD OF SCHEDULE</div>'+
+          '<div style="font-size:10px;color:var(--muted);margin-top:3px;">'+hrsSaved+' hours and '+daysSaved+' days saved vs original plan</div>'+
+        '</div>'+
+        '<div style="text-align:right;">'+
+          '<div style="font-size:22px;font-weight:800;color:var(--green);">'+pctUnderTime+'%</div>'+
+          '<div style="font-size:9px;color:var(--muted);">under time budget</div>'+
+        '</div>'+
+      '</div>'
+      :
+      '<div style="background:rgba(245,168,0,0.06);border-left:4px solid var(--gold);padding:10px 14px;">'+
+        '<div style="font-size:11px;font-weight:700;color:var(--gold);">IN PROGRESS — '+hrsPct+'% complete</div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:2px;">'+hrsUsed+' of '+planHrs+' planned hours used · '+hrsSaved+' hours remaining</div>'+
+      '</div>';
 
     return `<div style="background:var(--bg2);border:1px solid ${isComplete?'var(--green)':'var(--border)'};border-radius:10px;margin-bottom:12px;overflow:hidden;">
-      <!-- Header -->
       <div style="background:var(--bg3);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;">
         <span style="font-size:14px;font-weight:800;color:var(--gold);">${m.id}</span>
         <div style="display:flex;gap:8px;align-items:center;">
@@ -2742,7 +2785,6 @@ function renderPerformance(){
       </div>
       ${completionBanner}
       <div style="padding:14px;">
-        <!-- Hours comparison -->
         <div style="margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
             <span style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Hours</span>
@@ -2772,7 +2814,6 @@ function renderPerformance(){
           <div style="font-size:8px;color:var(--muted);margin-top:2px;">${hrsPct}% of planned hours used</div>
         </div>
 
-        <!-- Days comparison -->
         <div style="margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
             <span style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Days</span>
