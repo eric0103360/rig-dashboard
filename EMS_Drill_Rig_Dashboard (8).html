@@ -1505,7 +1505,7 @@ function renderRebuildSummary(){
     const sa=machines.find(x=>x.id===a)?.status||'planned';
     const sb=machines.find(x=>x.id===b)?.status||'planned';
     const rank=s=>s==='active'?0:s==='complete'?1:2;
-    return rank(sa)-rank(sb);
+    return rank(sa)-rank(sb)||(parseInt(a.replace(/\D/g,''),10)-parseInt(b.replace(/\D/g,''),10));
   });
   if(!allRigs.length){
     el.innerHTML='<div style="padding:16px;font-size:11px;color:var(--muted);text-align:center;">No EV data entered yet. Go to Earned Value (EV) & Days tab to add rig data.</div>';
@@ -1554,7 +1554,7 @@ function renderRebuildSummary(){
         <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);">0</td>
         <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);">0</td>
         <td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--muted);">0</td>
-        <td colspan="3" style="padding:7px 8px;font-size:10px;color:var(--muted);text-align:center;">— enter data in EV &amp; Days tab —</td>
+        <td colspan="4" style="padding:7px 8px;font-size:10px;color:var(--muted);text-align:center;">— enter data in EV &amp; Days tab —</td>
       </tr>`;
     }
 
@@ -1575,7 +1575,8 @@ function renderRebuildSummary(){
           ${daysEarly>0?'<div style="font-size:8px;color:var(--green);">'+daysEarly+' days early</div>':''}
         </td>
         <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${labourPct}% used</td>
-        <td style="padding:8px 8px;text-align:right;font-size:11px;">
+        <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--muted);">${fmtR(budgetCost)}</td>
+        <td style="padding:8px 12px;text-align:right;font-size:11px;">
           <div style="font-size:9px;color:var(--red);">(R) ACTUAL</div>
           <div style="color:var(--red);font-weight:700;font-size:12px;">${fmtR(actualUsed)}</div>
           <div style="font-size:9px;color:var(--green);margin-top:2px;">(R) SAVED</div>
@@ -1616,7 +1617,7 @@ function renderRebuildSummary(){
   const hasActive = allRigs.some(id=>machines.find(x=>x.id===id)?.status==='active');
   let finalRows = rows;
   if(hasComplete && hasActive){
-    const divider = '<tr><td colspan="8" style="padding:0"><div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,200,150,0.06);border-top:1px dashed rgba(0,200,150,0.3);border-bottom:1px dashed rgba(0,200,150,0.3);"><span style="font-size:8.5px;color:var(--green);font-weight:700;letter-spacing:1px;">&#10003; COMPLETED BUILDS</span></div></td></tr>';
+    const divider = '<tr><td colspan="9" style="padding:0"><div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,200,150,0.06);border-top:1px dashed rgba(0,200,150,0.3);border-bottom:1px dashed rgba(0,200,150,0.3);"><span style="font-size:8.5px;color:var(--green);font-weight:700;letter-spacing:1px;">&#10003; COMPLETED BUILDS</span></div></td></tr>';
     finalRows = rows.replace('<tr style="border-bottom:1px solid rgba(0,200,150,0.15)', divider+'<tr style="border-bottom:1px solid rgba(0,200,150,0.15)');
   }
   el.innerHTML=`
@@ -1640,10 +1641,9 @@ function renderRebuildSummary(){
     <tbody>
       ${finalRows}
       <tr style="background:var(--bg2);border-top:2px solid var(--border);">
-        <td colspan="5" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL FUNDS REQUIRED TO COMPLETE</td>
+        <td colspan="7" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL FUNDS REQUIRED TO COMPLETE</td>
         <td style="padding:9px 12px;text-align:right;font-size:11px;">${fmtR(totalBudget)}</td>
         <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:var(--red);">${fmtR(totalBalance)}</td>
-        <td></td>
       </tr>
     </tbody>
   </table></div>`;
@@ -2450,11 +2450,8 @@ function renderEV(){
   const container = document.getElementById('ev-rows-lc') || document.getElementById('ev-rows');
   if(!container) return;
   const BUDGET_HRS = 641; // Fixed for all rigs
-  // Show ALL machines — active first, then rest alphabetically
-  const active = [...machines].sort((a,b)=>{
-    const rank=m=>m.status==='active'?0:m.status==='complete'?2:1;
-    return rank(a)-rank(b)||(a.id>b.id?1:-1);
-  });
+  // Show ALL machines — sequential by rig number (DK003 → DK017)
+  const active = [...machines].sort((a,b)=>parseInt(a.id.replace(/\D/g,''),10)-parseInt(b.id.replace(/\D/g,''),10));
   if(!active.length){
     container.innerHTML = '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px;">No machines found.</div>';
     return;
