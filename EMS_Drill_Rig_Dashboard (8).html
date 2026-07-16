@@ -2358,6 +2358,10 @@ async function saveEVData(mid){
   d._labourCost  = labourCost;
   d._totalSpend  = totalSpend;
   localStorage.setItem('ev_'+mid, JSON.stringify(d));
+  // Confirm save immediately — don't wait for Firebase
+  toast('✓ '+mid+' saved');
+  const svBtn=document.getElementById('ev-save-'+mid);
+  if(svBtn){const orig=svBtn.textContent;svBtn.textContent='✓ SAVED';svBtn.style.background='var(--green)';setTimeout(()=>{svBtn.textContent=orig;svBtn.style.background='var(--gold)';},1500);}
   updateEVRemaining(mid);
   // ── Sync totalSpend + hrsUsed → machines so Fleet Overview updates ──
   const mIdx=machines.findIndex(x=>x.id===mid);
@@ -2376,14 +2380,14 @@ async function saveEVData(mid){
   } else {
     localStorage.removeItem('hrs_override_'+mid);
   }
-  // Also sync to Firebase so all devices see updated hours in Fleet Overview
+  // Also sync to Firebase so all devices see updated hours in Fleet Overview (non-blocking)
   try {
-    if(db) await db.collection('ems_machines').doc(mid).set({
+    if(db) db.collection('ems_machines').doc(mid).set({
       hrsUsed:    hrsForCalc,
       budgetUsed: totalSpend,
       status:     d.status||'planned',
       budget:     d.budgetCost||6000000
-    },{merge:true});
+    },{merge:true}).catch(e=>console.log('Machine sync failed:',e.message));
   } catch(e){ console.log('Machine sync skipped:',e.message); }
   // Refresh labour cost display fields live
   const lcEl=document.getElementById('ev-lc-'+mid);
@@ -2431,7 +2435,6 @@ async function saveEVData(mid){
   renderRebuildSummary();
   // Also refresh fleet charts to update labour % chart
   if(typeof renderFleetCharts==='function') setTimeout(renderFleetCharts,50);
-  toast('✓ '+mid+' saved');
 }
 function calcDays(startStr, endStr){
   if(!startStr || !endStr) return null;
@@ -2563,7 +2566,7 @@ function renderEV(){
         </div>
       </div>
 
-      <button onclick="saveEVData('${m.id}')" style="width:100%;margin-bottom:10px;padding:8px;background:var(--gold);color:#000;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">💾 SAVE</button>
+      <button id="ev-save-${m.id}" onclick="saveEVData('${m.id}')" style="width:100%;margin-bottom:10px;padding:8px;background:var(--gold);color:#000;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:background 0.2s;">💾 SAVE</button>
 
 
     </div>`;
