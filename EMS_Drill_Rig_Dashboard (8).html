@@ -921,20 +921,10 @@ localStorage.setItem = function(k,v){
   }
 };
 
-// ── MAINTENANCE MODE — set to true to temporarily block ALL logins (admin + viewer). ──
-// Data in Firebase/localStorage is untouched either way — this only gates the login screen.
-// To restore access, set this back to false.
-const MAINTENANCE_MODE = true;
-const MAINTENANCE_MSG = "Dashboard temporarily offline for maintenance. Please check back shortly.";
-
 const USERS={viewer:{pass:"ems2026",role:"viewer"},admin:{pass:"ems1234",role:"admin"}};
 let role=null;
 
 function login(){
-  if(MAINTENANCE_MODE){
-    document.getElementById("lerr").textContent=MAINTENANCE_MSG;
-    return;
-  }
   const u=document.getElementById("lu").value.trim().toLowerCase();
   const p=document.getElementById("lp").value.trim();
   const usr=USERS[u];
@@ -3445,13 +3435,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementB
   const DATA_URL='https://eric0103360.github.io/rig-dashboard/ems-data.json';
   // Always show login screen — no auto-login
   // This prevents admin session from leaking to other users
-  if(MAINTENANCE_MODE){
-    const sub=document.querySelector('.login-sub');
-    if(sub) sub.innerHTML='<span style="color:var(--red);font-weight:700;">'+MAINTENANCE_MSG+'</span>';
-    ['lu','lp'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=true;});
-    const errEl=document.getElementById('lerr');
-    if(errEl) errEl.textContent=MAINTENANCE_MSG;
-  }
   // Try to init Firebase on page load (scripts should be ready by now)
   setTimeout(function(){ initFirebase(); }, 500);
   console.log('EMS Tracker ready — please sign in');
