@@ -347,11 +347,11 @@ input:focus,select:focus{border-color:var(--gold);}
 
   <div class="crow" style="margin-bottom:13px;">
     <div class="cc">
-      <div class="cct">LABOUR % USED vs REMAINING — PER RIG</div>
+      <div class="cct">LABOUR % — PER RIG</div>
       <div id="ch-labour-pct" style="padding:8px 4px;"></div>
     </div>
     <div class="cc">
-      <div class="cct">BUDGET % USED vs REMAINING — PER RIG</div>
+      <div class="cct">BUDGET — PER RIG</div>
       <div id="ch-rebuild-pct" style="padding:8px 4px;"></div>
     </div>
   </div>
@@ -363,8 +363,8 @@ input:focus,select:focus{border-color:var(--gold);}
   <div class="cc" id="efficiency-section-fleet">
     <div style="font-size:9px;color:var(--muted);margin-bottom:11px;">Compares budget consumed against build completion. Positive gap = getting more build per rand spent.</div>
     <div style="display:flex;gap:14px;margin-bottom:10px;font-size:10px;">
-      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block;"></span>Actual %</span>
-      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build complete %</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--gold);display:inline-block;"></span>Spend %</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build %</span>
     </div>
     <div id="efficiency-rows-fleet"></div>
   </div>
@@ -389,7 +389,7 @@ input:focus,select:focus{border-color:var(--gold);}
   </div>
   <div class="crow">
 
-    <div class="cc"><div class="cct">PLANNED vs DAYS USED</div><div style="position:relative;height:300px;"><canvas id="ch-pd"></canvas></div></div>
+    <div class="cc"><div class="cct">PLANNED vs ACTUAL DAYS</div><div style="position:relative;height:300px;"><canvas id="ch-pd"></canvas></div></div>
   </div>
 </div>
 
@@ -434,8 +434,8 @@ input:focus,select:focus{border-color:var(--gold);}
     <div class="cc" id="efficiency-section">
       <div style="font-size:9px;color:var(--muted);margin-bottom:11px;">Compares budget consumed against build completion. Positive gap = getting more build per rand. Negative = spending faster than building.</div>
       <div style="display:flex;gap:14px;margin-bottom:10px;font-size:10px;">
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block;"></span>Actual %</span>
-        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build complete %</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--gold);display:inline-block;"></span>Spend %</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build %</span>
       </div>
       <div id="efficiency-rows"></div>
     </div>
@@ -450,8 +450,8 @@ input:focus,select:focus{border-color:var(--gold);}
     <span class="bsec-arrow">&#9654;</span>
   </div>
   <div class="bsec-body" id="bsec5-body">
-    <div class="cc"><div class="cct">ACTUAL vs REMAINING — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-bf"></canvas></div></div>
-    <div class="cc" style="margin-top:10px;"><div class="cct">PLANNED HOURS vs ACTUAL HOURS — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-hf"></canvas></div></div>
+    <div class="cc"><div class="cct">ACTUAL vs BALANCE — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-bf"></canvas></div></div>
+    <div class="cc" style="margin-top:10px;"><div class="cct">PLANNED vs ACTUAL HRS — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-hf"></canvas></div></div>
   </div>
 
 </div>
@@ -572,7 +572,7 @@ input:focus,select:focus{border-color:var(--gold);}
 <!-- PAGE 7: LABOUR COST + EV TRACKER -->
 <div id="page-labour" class="page">
   <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#9632; EARNED VALUE (EV) &amp; DAYS TRACKER</div>
-  <div style="font-size:9px;color:var(--muted);margin-bottom:10px;">Labour budget per rig = R550,000 (editable). Earned value = Build % × budget. Remaining = what is still to be consumed as build progresses. Build % comes from Task Entry actual hrs.</div>
+  <div style="font-size:9px;color:var(--muted);margin-bottom:10px;">Labour budget per rig = R550,000 (editable). Earned value = Build % × budget. Balance = what is still to be consumed as build progresses. Build % comes from Task Entry actual hrs.</div>
   <div id="ev-rows-lc"></div>
   <div style="margin-top:16px;">
     <button onclick="toggleAddMachineForm()" style="width:100%;padding:10px;background:transparent;border:2px dashed var(--gold);color:var(--gold);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px;">+ ADD MACHINE TO BUILD</button>
@@ -1523,7 +1523,7 @@ function renderRebuildSummary(){
     // Use manually entered usedDays if saved, else auto-calc from hours
     const usedDays=ev.usedDays>0?ev.usedDays:(actualHrs>0?Math.round(actualHrs/9):0);
     const remDays=Math.max(0,budgetDays-usedDays);
-    const labourPct=budgetDays>0?Math.min(Math.round(usedDays/budgetDays*100),100):0;
+    const labourPct=BUDGET_HRS>0?Math.min(Math.round(actualHrs/BUDGET_HRS*100),100):0;
     const rebuildPct=BUDGET_HRS>0?Math.min(Math.round(actualHrs/BUDGET_HRS*1000)/10,100):0;
     const budgetCost=ev.budgetCost||6000000;
     // Read totalSpend directly from EV — single source of truth
@@ -1532,7 +1532,7 @@ function renderRebuildSummary(){
     const labourCostLive=Math.round((evRaw.labourRate||0)*hrsLive);
     const actualUsed=(evRaw._totalSpend)||Math.round((evRaw.actualUsed||0)+labourCostLive);
     // Actual % = totalSpend / budgetCost × 100
-    const budgetUsedPct=budgetCost>0&&actualUsed>0?Math.min(Math.round(actualUsed/budgetCost*1000)/10,100):0;
+    const budgetUsedPct=budgetCost>0&&actualUsed>0?Math.round(actualUsed/budgetCost*1000)/10:0;
     const hasData=budgetDays>0||actualHrs>0||ev.budgetCost>0;
 
     if(hasData){
@@ -1574,40 +1574,39 @@ function renderRebuildSummary(){
           <div style="color:var(--green);font-weight:700;font-size:10px;">✓ Done</div>
           ${daysEarly>0?'<div style="font-size:8px;color:var(--green);">'+daysEarly+' days early</div>':''}
         </td>
-        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${labourPct}% used</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">${labourPct}%</td>
         <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--muted);">${fmtR(budgetCost)}</td>
         <td style="padding:8px 12px;text-align:right;font-size:11px;">
-          <div style="font-size:9px;color:var(--red);">(R) ACTUAL</div>
+          <div style="font-size:9px;color:var(--muted);">ACTUAL</div>
           <div style="color:var(--red);font-weight:700;font-size:12px;">${fmtR(actualUsed)}</div>
-          <div style="font-size:9px;color:var(--green);margin-top:2px;">(R) SAVED</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px;">SAVED</div>
           <div style="color:var(--green);font-weight:700;font-size:12px;">${fmtR(Math.max(0,budgetCost-actualUsed))}</div>
         </td>
       </tr>`;
     }
 
     return `<tr style="border-bottom:1px solid var(--border);">
-      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">${id}</td>
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">${id}${(budgetCost-actualUsed)<0?' <span style="font-size:8px;padding:1px 6px;border-radius:3px;background:rgba(255,85,85,0.18);color:var(--red);">OVER</span>':' <span style="font-size:8px;padding:1px 6px;border-radius:3px;background:rgba(0,200,150,0.15);color:var(--green);">ON BUDGET</span>'}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${ev.planHrs||441}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">${actualHrs}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${budgetDays||0}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;">${usedDays||0}</td>
-      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:${(function(){const pct=budgetDays>0?(usedDays/budgetDays*100):0;return pct>=70?'var(--green)':pct>=40?'var(--gold)':'var(--red)';})()};">${remDays}</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:${remDays>0?'var(--green)':'var(--red)'};">${remDays}</td>
       <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
-        <span style="color:${labourPct>=70?'var(--green)':labourPct>=40?'var(--gold)':'var(--red)'};">${labourPct?labourPct+'%':'—'}</span>
-        <span style="color:var(--muted);font-size:10px;"> | </span>
-        <span style="color:var(--muted);">${labourPct?Math.max(0,100-labourPct)+'%':'—'}</span>
+        <span style="color:var(--text);">${labourPct?labourPct+'%':'—'}</span>
+        <div style="font-size:9px;color:var(--muted);font-weight:400;">${actualHrs} of ${BUDGET_HRS} hrs</div>
       </td>
       <td style="padding:8px 12px;text-align:right;font-size:11px;">${fmtR(budgetCost)}</td>
       <td style="padding:8px 12px;text-align:right;font-size:11px;">
         <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
-          <span style="color:var(--red);font-size:9px;font-weight:700;">(R) ACTUAL</span>
-          <span style="color:var(--red);font-weight:700;font-size:13px;">${fmtR(actualUsed)}</span>
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">ACTUAL</span>
+          <span style="color:var(--text);font-weight:700;font-size:13px;">${fmtR(actualUsed)}</span>
         </div>
         <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
-          <span style="color:var(--green);font-size:9px;font-weight:700;">(R) REMAINING</span>
-          <span style="color:var(--green);font-weight:700;font-size:13px;">${fmtR(budgetCost-actualUsed)}</span>
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">BALANCE</span>
+          <span style="color:${(budgetCost-actualUsed)<0?'var(--red)':'var(--green)'};font-weight:700;font-size:13px;">${fmtR(budgetCost-actualUsed)}</span>
         </div>
-        <div style="font-size:9px;color:${budgetUsedPct>=80?'var(--red)':budgetUsedPct>=50?'var(--gold)':'var(--green)'};font-weight:700;text-align:right;">${budgetUsedPct}% used · ${Math.max(0,Math.round((100-budgetUsedPct)*10)/10)}% rem</div>
+        <div style="font-size:9px;color:${(budgetCost-actualUsed)<0?'var(--red)':'var(--green)'};font-weight:700;text-align:right;">${budgetUsedPct}% actual · ${Math.round((100-budgetUsedPct)*10)/10}% balance</div>
       </td>
     </tr>`;
   }).join('');
@@ -1623,25 +1622,25 @@ function renderRebuildSummary(){
   el.innerHTML=`
   <div style="padding:9px 13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg3);">
     <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;">D25KS REBUILD UPDATE — ${month.toUpperCase()}</span>
-    <span style="font-size:10px;color:var(--muted);">Funds remaining: <span style="color:var(--green);font-weight:700;">${fmtR(totalBalance)}</span></span>
+    <span style="font-size:10px;color:var(--muted);">Balance: <span style="color:var(--green);font-weight:700;">${fmtR(totalBalance)}</span></span>
   </div>
   <div style="overflow-x:auto;">
   <table style="width:100%;border-collapse:collapse;">
     <thead><tr style="background:var(--bg3);border-bottom:1px solid var(--border);">
       <th style="padding:7px 12px;text-align:left;font-size:9px;font-weight:700;color:var(--muted);"></th>
-      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>HOURS</th>
-      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">HOURS<br>USED</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>HRS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">ACTUAL<br>HRS</th>
       <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>DAYS</th>
-      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">DAYS<br>USED</th>
-      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">DAYS<br>REMAINING</th>
-      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">LABOUR %<br>USED | REMAINING</th>
-      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);">BUDGETED COST<br>OF REBUILD</th>
-      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);"><span style="color:var(--red)">(R) ACTUAL</span><br><span style="color:var(--green)">(R) REMAINING</span><br><span style="font-weight:400;font-size:8px;">% used · % remaining</span></th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">ACTUAL<br>DAYS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">DAYS<br>BALANCE</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">LABOUR<br>%</th>
+      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);">BUDGET</th>
+      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);">ACTUAL<br>BALANCE</th>
     </tr></thead>
     <tbody>
       ${finalRows}
       <tr style="background:var(--bg2);border-top:2px solid var(--border);">
-        <td colspan="7" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL FUNDS REQUIRED TO COMPLETE</td>
+        <td colspan="7" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL — ${allRigs.length} RIGS IN BUILD</td>
         <td style="padding:9px 12px;text-align:right;font-size:11px;">${fmtR(totalBudget)}</td>
         <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:var(--red);">${fmtR(totalBalance)}</td>
       </tr>
@@ -1663,15 +1662,18 @@ function renderFleet(){
   },0);
   const th=machines.reduce((s,m)=>{const evR=JSON.parse(localStorage.getItem('ev_'+m.id)||'{}');return s+(evR.planHrs||441);},0),uh=machines.reduce((s,m)=>s+m.hrsUsed,0);
   const ac=machines.filter(m=>m.status==="active"&&m.hrsUsed>0).length,dc2=machines.filter(m=>m.status==="complete").length;
+  const inBuild=machines.filter(m=>m.status==="active"||m.status==="complete"||m.hrsUsed>0);
+  const nBuild=inBuild.length;
+  const thBuild=inBuild.reduce((s,m)=>{const e=JSON.parse(localStorage.getItem('ev_'+m.id)||'{}');return s+(e.planHrs||441);},0)||1;
   document.getElementById("fleet-kpis").innerHTML=`
-    <div class="kpi r"><div class="kl">ACTUAL</div><div class="kv r">${fmtM(ub)}</div><div class="ks">${pct(ub,tb)}% of R${(tb/1e6).toFixed(0)}M fleet budget</div></div>
-    <div class="kpi gr"><div class="kl">BUDGET REMAINING</div><div class="kv gr">${fmtM(tb-ub)}</div><div class="ks">${100-pct(ub,tb)}% remaining</div></div>
-    <div class="kpi g"><div class="kl">PLANNED HOURS</div><div class="kv g">${th.toLocaleString()}</div><div class="ks">Total planned — all 15 rigs</div></div>
-    <div class="kpi c"><div class="kl">ACTUAL HOURS LOGGED</div><div class="kv c">${uh.toLocaleString()}</div><div class="ks">${pct(uh,th)}% · ${ac} active · ${dc2} complete</div></div>`;
+    <div class="kpi r"><div class="kl">ACTUAL — FLEET</div><div class="kv r">${fmtM(ub)}</div><div class="ks">${pct(ub,tb)}% of R${(tb/1e6).toFixed(0)}M · all ${machines.length} rigs</div></div>
+    <div class="kpi gr"><div class="kl">BALANCE — FLEET</div><div class="kv gr">${fmtM(tb-ub)}</div><div class="ks">${100-pct(ub,tb)}% balance · all ${machines.length} rigs</div></div>
+    <div class="kpi g"><div class="kl">PLANNED HRS — IN BUILD</div><div class="kv g">${thBuild.toLocaleString()}</div><div class="ks">${nBuild} rigs in build · ${th.toLocaleString()} across all ${machines.length}</div></div>
+    <div class="kpi c"><div class="kl">ACTUAL HRS — IN BUILD</div><div class="kv c">${uh.toLocaleString()}</div><div class="ks">${pct(uh,thBuild)}% of ${thBuild.toLocaleString()} · ${ac} active · ${dc2} complete</div></div>`;
   const bp=pct(ub,tb);
   document.getElementById("fleet-bud").innerHTML=`
-    <div style="min-width:110px;"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;">FLEET BUDGET</div><div style="font-size:18px;font-weight:800;color:var(--gold);">${fmtM(tb)}</div></div>
-    <div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>Used: <strong style="color:var(--red);">${fmtM(ub)}</strong></span><span>Remaining: <strong style="color:var(--green);">${fmtM(tb-ub)}</strong></span><strong style="color:var(--gold);">${bp}% used</strong></div>
+    <div style="min-width:110px;"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;">FLEET BUDGET — ALL RIGS</div><div style="font-size:18px;font-weight:800;color:var(--gold);">${fmtM(tb)}</div></div>
+    <div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>Actual: <strong style="color:var(--text);">${fmtM(ub)}</strong></span><span>Balance: <strong style="color:var(--green);">${fmtM(tb-ub)}</strong></span><strong style="color:var(--gold);">${bp}% actual</strong></div>
     <div class="fb-track"><div class="fb-fill" style="width:${bp}%;"></div></div></div>`;
   // Render budget per machine into fleet page
   const bpmFleet = document.getElementById('bpm-fleet');
@@ -1725,9 +1727,9 @@ function renderFleetCharts(){
 
   // Labour % = usedDays / budgetDays from EV & Days tab
   const labourPcts=sumRigs.map(m=>{
-    const ev=typeof getEVData==='function'?getEVData(m.id):{budgetDays:0,usedDays:0};
-    const usedDays=ev.usedDays>0?ev.usedDays:(m.hrsUsed>0?Math.round(m.hrsUsed/9):0);
-    const consumed=ev.budgetDays>0?Math.min(Math.round(usedDays/ev.budgetDays*100),100):0;
+    const ev=typeof getEVData==='function'?getEVData(m.id):{planHrs:441};
+    const planH=ev.planHrs||441;
+    const consumed=planH>0?Math.min(Math.round((m.hrsUsed||0)/planH*100),100):0;
     return Math.max(0,100-consumed);
   });
 
@@ -1758,8 +1760,9 @@ function renderFleetCharts(){
     const consumed=labourPcts.map(v=>Math.max(0,100-v)); // labourPcts is already remaining
     lpEl.innerHTML=`
       <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Consumed</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Remaining to complete</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#F0B42D;border-radius:2px;display:inline-block;"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Balance</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Over</span>
       </div>`+
       sumRigs.map((m,i)=>{
         const rem=labourPcts[i];
@@ -1768,11 +1771,11 @@ function renderFleetCharts(){
         // Complete rigs show 100% green — no red
         const displayCon=isComplete?0:con;
         const displayRem=isComplete?100:rem;
-        const conCol='#E24B4A';
+        const conCol=con>100?'#E24B4A':'#F0B42D';
         return `<div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
             <span style="font-size:11px;font-weight:700;color:${isComplete?'var(--green)':'var(--gold)'};">${m.id}${isComplete?' <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span>':''}</span>
-            <span style="font-size:10px;color:var(--muted);">${isComplete?'&#10003; Build complete':con+'% used · '+rem+'% remaining'}</span>
+            <span style="font-size:10px;color:var(--muted);">${isComplete?'&#10003; Build complete':con+'% actual · '+rem+'% balance'}</span>
           </div>
           <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
             ${displayCon>0?'<div style="width:'+displayCon+'%;background:'+conCol+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(displayCon>8?displayCon+'%':'')+'</span></div>':''}
@@ -1787,28 +1790,33 @@ function renderFleetCharts(){
   if(rpEl){
     rpEl.innerHTML=`
       <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Actual</span>
-        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Budget remaining</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#F0B42D;border-radius:2px;display:inline-block;"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Balance</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Over</span>
       </div>`+
       sumRigs.map(m=>{
         const ev=typeof getEVData==='function'?getEVData(m.id):{budgetCost:6000000,balance:0};
         const bc=ev.budgetCost||6000000;
-        const au=ev.actualUsed||0;
+        const evRawB=JSON.parse(localStorage.getItem('ev_'+m.id)||'{}');
+        const hrsB=(evRawB.hrsOverride!==null&&evRawB.hrsOverride!==undefined)?evRawB.hrsOverride:(m.hrsUsed||0);
+        const labourB=Math.round((evRawB.labourRate||0)*hrsB);
+        const au=(evRawB._totalSpend)||Math.round((evRawB.actualUsed||0)+labourB);
         const isComplete=m.status==='complete';
-        const pctUsed=bc>0&&au>0?Math.min(Math.round(au/bc*1000)/10,100):0;
+        const pctUsed=bc>0&&au>0?Math.round(au/bc*1000)/10:0;
         const pctRem=Math.max(0,Math.round((100-pctUsed)*10)/10);
         const consumed=Math.round(au);
         const remaining=Math.round(bc-au);
+        const isOver=remaining<0;
         // Complete: show actual used as green, remaining as lighter green
-        const usedCol=isComplete?'#1D9E75':'#E24B4A';
+        const usedCol=isOver?'#E24B4A':'#F0B42D';
         return `<div style="margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
             <span style="font-size:11px;font-weight:700;color:${isComplete?'var(--green)':'var(--gold)'};">${m.id}${isComplete?' <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span>':''}</span>
-            <span style="font-size:10px;color:var(--muted);">R ${consumed.toLocaleString('en-ZA')} used · R ${remaining.toLocaleString('en-ZA')} ${isComplete?'saved':'remaining'}</span>
+            <span style="font-size:10px;color:${isOver?'var(--red)':'var(--muted)'};">R ${consumed.toLocaleString('en-ZA')} actual · ${isOver?'R '+Math.abs(remaining).toLocaleString('en-ZA')+' over':'R '+remaining.toLocaleString('en-ZA')+(isComplete?' saved':' balance')}</span>
           </div>
           <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
             ${pctUsed>0?'<div style="width:'+pctUsed+'%;background:'+usedCol+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(pctUsed>8?pctUsed+'%':'')+'</span></div>':''}
-            ${pctRem>0?'<div style="width:'+pctRem+'%;background:'+(isComplete?'rgba(0,200,150,0.35)':'#1D9E75')+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(pctRem>8?pctRem+'%':'')+'</span></div>':''}
+            ${pctRem>0?'<div style="width:'+pctRem+'%;background:'+'#1D9E75'+';display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">'+(pctRem>8?pctRem+'%':'')+'</span></div>':''}
           </div>
         </div>`;
       }).join('');
@@ -1848,9 +1856,9 @@ function renderPhases(){
     const maxPlan=Math.max(...planD,1);
     cPD=new Chart(document.getElementById("ch-pd"),{type:"bar",
       data:{labels:evRigs.map(m=>m.id),datasets:[
-        {label:"Days used used",data:actD,backgroundColor:"#F5A800",borderRadius:0,stack:"days",
+        {label:"Actual days",data:actD,backgroundColor:"#F5A800",borderRadius:0,stack:"days",
           datalabels:{display:false}},
-        {label:"Days remaining",data:remD,backgroundColor:"rgba(0,200,150,0.65)",borderRadius:4,stack:"days",
+        {label:"Days balance",data:remD,backgroundColor:"rgba(0,200,150,0.65)",borderRadius:4,stack:"days",
           datalabels:{display:false}}
       ]},
       options:{responsive:true,maintainAspectRatio:false,
@@ -1956,17 +1964,17 @@ function loadDrill(){
             <span style="display:flex;align-items:center;gap:3px;"><span style="width:12px;height:5px;background:rgba(0,212,255,0.4);display:inline-block;border-radius:1px;border:1px dashed rgba(0,212,255,0.6);"></span>Forecast remaining</span>
           </div>
         </div>
-        <div class="dc"><div class="dct">BUDGET & HOURS</div>
+        <div class="dc"><div class="dct">BUDGET & HRS</div>
           <div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:4px;letter-spacing:0.5px;">BUDGET</div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--muted);">Total budget</span><strong style="color:var(--gold);">${fmt(m.budget)}</strong></div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--muted);">Used</span><strong style="color:var(--red);">${fmt(m.budgetUsed)} · ${bp}%</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--muted);">Budget</span><strong style="color:var(--gold);">${fmt(m.budget)}</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--muted);">Actual</span><strong style="color:var(--text);">${fmt(m.budgetUsed)} · ${bp}%</strong></div>
           <div style="background:var(--bg);border-radius:2px;height:7px;margin:4px 0;"><div style="height:7px;border-radius:2px;width:${bp}%;background:${bp>90?"var(--red)":bp>70?"var(--gold)":"var(--gold)"};"></div></div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:11px;"><span style="color:var(--muted);">Remaining</span><strong style="color:var(--green);">${fmt(m.budget-m.budgetUsed)}</strong></div>
-          <div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:4px;letter-spacing:0.5px;border-top:1px solid var(--border);padding-top:8px;">HOURS</div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:11px;"><span style="color:var(--muted);">Balance</span><strong style="color:${(m.budget-m.budgetUsed)<0?'var(--red)':'var(--green)'};">${fmt(m.budget-m.budgetUsed)}</strong></div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:4px;letter-spacing:0.5px;border-top:1px solid var(--border);padding-top:8px;">HRS</div>
           <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--muted);">Planned hrs</span><strong style="color:var(--gold);">${m.totalHrs}h</strong></div>
           <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:var(--muted);">Actual hrs</span><strong style="color:var(--gold);">${m.hrsUsed}h · ${p}%</strong></div>
           <div style="background:var(--bg);border-radius:2px;height:7px;margin:4px 0;"><div style="height:7px;border-radius:2px;width:${p}%;background:${p>=100?"var(--green)":p>50?"var(--gold)":"var(--gold)"};"></div></div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:9px;"><span style="color:var(--muted);">Hrs remaining</span><strong style="color:${p>=100?"var(--green)":"var(--cyan)"};">${Math.round(Math.max(0,(JSON.parse(localStorage.getItem("ev_"+m.id)||"{}").planHrs||441)-m.hrsUsed)*10)/10}h</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:9px;"><span style="color:var(--muted);">Hrs balance</span><strong style="color:${p>=100?"var(--green)":"var(--cyan)"};">${Math.round(Math.max(0,(JSON.parse(localStorage.getItem("ev_"+m.id)||"{}").planHrs||441)-m.hrsUsed)*10)/10}h</strong></div>
           <div style="border-top:1px solid var(--border);padding-top:7px;"><div style="font-size:9px;color:var(--muted);margin-bottom:3px;font-weight:700;">NOTES</div><div style="font-size:10px;line-height:1.5;">${m.notes||"No notes"}</div></div>
         </div>
       </div>
@@ -1975,8 +1983,8 @@ function loadDrill(){
       <div class="cc">
         <div class="cct">BUDGET — ${m.id}</div>
         <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px;">
-          <span>Used: <strong style="color:var(--red);">${fmt(m.budgetUsed)}</strong></span>
-          <span>Rem: <strong style="color:var(--green);">${fmt(m.budget-m.budgetUsed)}</strong></span>
+          <span>Actual: <strong style="color:var(--text);">${fmt(m.budgetUsed)}</strong></span>
+          <span>Balance: <strong style="color:var(--green);">${fmt(m.budget-m.budgetUsed)}</strong></span>
           <span style="color:var(--gold);font-weight:700;">${bp}%</span>
         </div>
         <div style="position:relative;height:60px;"><canvas id="cdb"></canvas></div>
@@ -1985,7 +1993,7 @@ function loadDrill(){
         <div class="cct">HOURS — ${m.id}</div>
         <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:4px;">
           <span>Actual: <strong style="color:var(--gold);">${m.hrsUsed}h</strong></span>
-          <span>Rem: <strong style="color:var(--cyan);">${Math.round(Math.max(0,(JSON.parse(localStorage.getItem("ev_"+m.id)||"{}").planHrs||441)-m.hrsUsed)*10)/10}h</strong></span>
+          <span>Balance: <strong style="color:var(--cyan);">${Math.round(Math.max(0,(JSON.parse(localStorage.getItem("ev_"+m.id)||"{}").planHrs||441)-m.hrsUsed)*10)/10}h</strong></span>
           <span style="color:var(--gold);font-weight:700;">${p}%</span>
         </div>
         <div style="position:relative;height:60px;"><canvas id="cdh"></canvas></div>
@@ -1993,12 +2001,12 @@ function loadDrill(){
     </div>`;
   if(cDB)cDB.destroy();
   cDB=new Chart(document.getElementById("cdb"),{type:"bar",
-    data:{labels:[m.id],datasets:[{label:"Used",data:[m.budgetUsed/1e6],backgroundColor:"#FF4B4B",borderRadius:3},{label:"Remaining",data:[(m.budget-m.budgetUsed)/1e6],backgroundColor:"#00C896",borderRadius:3}]},
+    data:{labels:[m.id],datasets:[{label:"Actual",data:[m.budgetUsed/1e6],backgroundColor:"#FF4B4B",borderRadius:3},{label:"Balance",data:[(m.budget-m.budgetUsed)/1e6],backgroundColor:"#00C896",borderRadius:3}]},
     options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"#D8E4F0",font:{size:10}}}},
       scales:{x:{stacked:true,grid:{color:"rgba(255,255,255,0.06)"},ticks:{color:"#5A7090",callback:v=>"R"+v+"M"}},y:{stacked:true,grid:{display:false},ticks:{color:"#D8E4F0"}}}}});
   if(cDH)cDH.destroy();
   cDH=new Chart(document.getElementById("cdh"),{type:"bar",
-    data:{labels:[m.id],datasets:[{label:"Actual hrs",data:[m.hrsUsed],backgroundColor:"#F5A800",borderRadius:3},{label:"Remaining hrs",data:[Math.max(0,m.totalHrs-m.hrsUsed)],backgroundColor:"rgba(0,212,255,0.35)",borderRadius:3}]},
+    data:{labels:[m.id],datasets:[{label:"Actual hrs",data:[m.hrsUsed],backgroundColor:"#F5A800",borderRadius:3},{label:"Balance hrs",data:[Math.max(0,m.totalHrs-m.hrsUsed)],backgroundColor:"rgba(0,212,255,0.35)",borderRadius:3}]},
     options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"#D8E4F0",font:{size:10}}}},
       scales:{x:{stacked:true,grid:{color:"rgba(255,255,255,0.06)"},ticks:{color:"#5A7090",callback:v=>v+"h"}},y:{stacked:true,grid:{display:false},ticks:{color:"#D8E4F0"}}}}});
   setTimeout(()=>renderGantt(id),50);
@@ -2418,9 +2426,9 @@ async function saveEVData(mid){
     const barCol=rebuildPct>=70?'var(--green)':rebuildPct>=30?'var(--gold)':'var(--red)';
     resEl.innerHTML=`
       <div class="ev-result-row"><span style="color:var(--muted);">Planned hrs</span><span style="font-weight:700;">${BUDGET_HRS}</span></div>
-      <div class="ev-result-row"><span style="color:var(--muted);">Hours used</span><span style="color:var(--gold);font-weight:700;">${actualHrs} <span style="font-size:9px;font-weight:400;">from Task Entry</span></span></div>
-      <div class="ev-result-row"><span style="color:var(--muted);">Days remaining</span><span style="color:${remCol};font-weight:700;">${daysToComplete} <span style="font-size:9px;">${d.budgetDays?'('+d.budgetDays+' − '+d.usedDays+')':''}</span></span></div>
-      <div class="ev-result-row"><span style="color:var(--muted);">Labour % used</span><span style="color:${labCol};font-weight:700;">${labourPct}%</span></div>
+      <div class="ev-result-row"><span style="color:var(--muted);">Actual hrs</span><span style="color:var(--gold);font-weight:700;">${actualHrs} <span style="font-size:9px;font-weight:400;">from Task Entry</span></span></div>
+      <div class="ev-result-row"><span style="color:var(--muted);">Days balance</span><span style="color:${remCol};font-weight:700;">${daysToComplete} <span style="font-size:9px;">${d.budgetDays?'('+d.budgetDays+' − '+d.usedDays+')':''}</span></span></div>
+      <div class="ev-result-row"><span style="color:var(--muted);">Labour %</span><span style="color:${labCol};font-weight:700;">${labourPct}%</span></div>
       <div style="border-top:1px solid var(--border);margin:5px 0;"></div>
       <div class="ev-result-row"><span style="font-weight:700;">Rebuild % complete</span>
         <span style="display:flex;align-items:center;gap:6px;">
@@ -2486,20 +2494,20 @@ function renderEV(){
           <input type="number" class="ev-input editable" id="ev-bd-${m.id}" value="${ev.budgetDays||''}" min="0" step="1" placeholder="e.g. 71" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""} >
         </div>
         <div class="ev-field">
-          <div class="ev-label">Used days ✏</div>
+          <div class="ev-label">Actual days ✏</div>
           <input type="number" class="ev-input editable" id="ev-ud-${m.id}" value="${ev.usedDays||''}" min="0" step="1" placeholder="e.g. 33" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""} >
         </div>
 
         <div class="ev-field">
-          <div class="ev-label">Budgeted cost of rebuild (R) ✏</div>
+          <div class="ev-label">Budget (R) ✏</div>
           <input type="number" class="ev-input editable" id="ev-bc-${m.id}" value="${ev.budgetCost||''}" min="0" step="10000" placeholder="e.g. 6000000" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""} >
         </div>
         <div class="ev-field">
-          <div class="ev-label">(R) Actual — Items / Products purchased ✏</div>
+          <div class="ev-label">Actual — items / products purchased ✏</div>
           <input type="number" class="ev-input editable" id="ev-bal-${m.id}" value="${ev.actualUsed||''}" min="0" step="10000" placeholder="e.g. 18234" oninput="recalcLabour('${m.id}')" onchange="saveEVData('${m.id}');updateEVRemaining('${m.id}')" onblur="saveEVData('${m.id}');updateEVRemaining('${m.id}')" ${role!=="admin"?"disabled":""} >
         </div>
         <div class="ev-field">
-          <div class="ev-label">(R) Remaining — auto calculated</div>
+          <div class="ev-label">Balance — auto calculated</div>
           <input type="number" class="ev-input" id="ev-rem-${m.id}" value="${Math.max(0,(ev.budgetCost||6000000)-((ev.actualUsed||0)+(ev._labourCost||0)))}" readonly style="opacity:0.7;cursor:default;border-color:var(--green);color:var(--green);">
         </div>
       </div>
@@ -2507,7 +2515,7 @@ function renderEV(){
       <div style="background:rgba(0,200,150,0.05);border:1px solid rgba(0,200,150,0.2);border-radius:6px;padding:11px;margin-bottom:10px;">
         <div style="font-size:9px;color:var(--green);font-weight:700;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:9px;">⚙ Labour Cost Calculator</div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;">
-          <span style="font-size:9px;color:var(--muted);min-width:115px;">Hours used ✏</span>
+          <span style="font-size:9px;color:var(--muted);min-width:115px;">Actual hrs ✏</span>
           <input type="number" class="ev-input editable" id="ev-hrs-${m.id}" value="${(function(){const mx=machines.find(x=>x.id===m.id);const oh=ev.hrsOverride;return (oh!==null&&oh!==undefined)?oh:(mx?mx.hrsUsed||0:0);})()}" min="0" step="0.5" oninput="recalcLabour('${m.id}')" onchange="saveEVData('${m.id}')" onblur="saveEVData('${m.id}')" ${role!=="admin"?"disabled":""} style="width:90px;border-color:var(--gold);color:var(--gold);padding:4px 8px;font-size:11px;">
           <span style="font-size:9px;color:var(--muted);">hrs (Task Entry auto / editable)</span>
         </div>
@@ -2521,27 +2529,27 @@ function renderEV(){
 
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:9px;">
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;">
-            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Hrs Still To Use</div>
+            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Hrs Balance</div>
             <div id="ev-hrem-${m.id}" style="font-size:13px;font-weight:800;color:var(--cyan,#00D4FF);">${(function(){const hrs=(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})());return Math.max(0,441-hrs);})()}</div>
-            <div style="font-size:7px;color:var(--muted);margin-top:2px;">441 planned − used</div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">441 planned − actual</div>
           </div>
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;">
-            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Current Labour Cost</div>
+            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Labour Cost</div>
             <div id="ev-lc-${m.id}" style="font-size:13px;font-weight:800;color:var(--gold);">R ${((ev.labourRate||0)*(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})())).toLocaleString('en-ZA')}</div>
-            <div style="font-size:7px;color:var(--muted);margin-top:2px;">hrs used × rate</div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">actual hrs × rate</div>
           </div>
           <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px;">
-            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Remaining Cost</div>
+            <div style="font-size:7.5px;color:var(--muted);font-weight:700;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:4px;">Balance Cost</div>
             <div id="ev-rcost-${m.id}" style="font-size:13px;font-weight:800;color:var(--green);">R ${((ev.labourRate||0)*Math.max(0,441-(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})()))).toLocaleString('en-ZA')}</div>
-            <div style="font-size:7px;color:var(--muted);margin-top:2px;">hrs left × rate</div>
+            <div style="font-size:7px;color:var(--muted);margin-top:2px;">balance hrs × rate</div>
           </div>
         </div>
 
         <div style="border-top:1px dashed rgba(0,200,150,0.2);margin:8px 0;"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;">
           <div>
-            <div style="font-size:10px;color:var(--text);font-weight:700;">(R) Actual — total spend</div>
-            <div style="font-size:8.5px;color:var(--muted);margin-top:2px;">Labour cost + Items / Products purchased → auto-updates Fleet Overview</div>
+            <div style="font-size:10px;color:var(--text);font-weight:700;">Actual — total spend</div>
+            <div style="font-size:8.5px;color:var(--muted);margin-top:2px;">Labour cost + items / products purchased → auto-updates Fleet Overview</div>
           </div>
           <div style="text-align:right;">
             <div id="ev-ts-${m.id}" style="font-size:14px;font-weight:700;color:var(--red);">R ${(((ev.labourRate||0)*(ev.hrsOverride!=null?ev.hrsOverride:(function(){const mx=machines.find(x=>x.id===m.id);return mx?mx.hrsUsed||0:0;})()))+(ev.actualUsed||0)).toLocaleString('en-ZA')}</div>
@@ -2581,8 +2589,8 @@ function renderBudgetCharts(){
   if(typeof cBF!=='undefined'){try{cBF.destroy();}catch(e){}}
   cBF=new Chart(document.getElementById('ch-bf'),{type:'bar',
     data:{labels,datasets:[
-      {label:'Used',data:used,backgroundColor:'rgba(255,85,85,0.75)',borderRadius:3},
-      {label:'Remaining',data:rem,backgroundColor:'rgba(0,200,150,0.6)',borderRadius:3}
+      {label:'Actual',data:used,backgroundColor:'rgba(255,85,85,0.75)',borderRadius:3},
+      {label:'Balance',data:rem,backgroundColor:'rgba(0,200,150,0.6)',borderRadius:3}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8A9AAA',font:{size:10}}}},
       scales:{x:{stacked:true,ticks:{color:'#8A9AAA',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}},
@@ -2625,7 +2633,7 @@ function renderEfficiency(){
         <span style="font-size:9px;font-weight:700;color:${gapCol};">${gapLabel}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-        <span style="font-size:10px;color:var(--muted);width:96px;">Actual</span>
+        <span style="font-size:10px;color:var(--muted);width:96px;">Spend</span>
         <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;">
           <div style="width:${budgetPct}%;height:11px;background:var(--red);border-radius:3px;transition:width 0.4s;"></div>
         </div>
@@ -2633,7 +2641,7 @@ function renderEfficiency(){
         <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">${lcFmt(m.budgetUsed)}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:10px;color:var(--muted);width:96px;">Build complete</span>
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build</span>
         <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;">
           <div style="width:${buildPct}%;height:11px;background:var(--green);border-radius:3px;transition:width 0.4s;"></div>
         </div>
@@ -2660,11 +2668,11 @@ function renderBPM(){
       </div>
       <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:${nameCol};font-weight:700;">${fmt(m.budget)}</span></div>
       <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:${bp}%;background:${rc};"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Used: ${fmt(m.budgetUsed)}</span><span style="color:${rc};font-weight:700;">${bp}%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: ${fmt(m.budgetUsed)}</span><span style="color:${rc};font-weight:700;">${bp}%</span></div>
       <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:${nameCol};font-weight:700;">${m.hrsUsed} / ${planHrs}h</span></div>
       <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:${hp}%;background:${isComplete?'var(--green)':'var(--gold)'};opacity:0.7;"></div></div>
-      <div style="font-size:9px;color:${isComplete?'var(--green)':'var(--green)'};margin-top:2px;">
-        ${isComplete?'&#10003; Complete — '+fmt(Math.max(0,m.budget-m.budgetUsed))+' saved':'Rem: '+fmt(m.budget-m.budgetUsed)+' · '+hrsLeft+'h left'}
+      <div style="font-size:9px;color:${isComplete?'var(--green)':((m.budget-m.budgetUsed)<0?'var(--red)':'var(--green)')};margin-top:2px;">
+        ${isComplete?'&#10003; Complete — '+fmt(Math.max(0,m.budget-m.budgetUsed))+' saved':'Balance: '+fmt(m.budget-m.budgetUsed)+' · '+hrsLeft+'h'}
       </div>
     </div>`;
   }).join("");
@@ -2675,6 +2683,8 @@ function renderEfficiencyHTML(){
   if(!active.length) return '<div style="font-size:11px;color:var(--muted);text-align:center;padding:16px;">No active machines with data yet.</div>';
   return active.map(m=>{
     const budgetPct=m.budget>0?Math.min(Math.round(m.budgetUsed/m.budget*1000)/10,100):0;
+    const budgetPctTrue=m.budget>0?Math.round(m.budgetUsed/m.budget*1000)/10:0;
+    const spendCol=(m.budget-m.budgetUsed)<0?'var(--red)':'var(--gold)';
     const buildPct=Math.min(Math.round(m.hrsUsed/441*1000)/10,100);
     const gap=Math.round((buildPct-budgetPct)*10)/10;
     const gapCol=gap>=0?'var(--green)':'var(--red)';
@@ -2686,13 +2696,13 @@ function renderEfficiencyHTML(){
         <span style="font-size:9px;font-weight:700;color:${gapCol};">${gapLabel}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-        <span style="font-size:10px;color:var(--muted);width:96px;">Actual</span>
-        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:${budgetPct}%;height:11px;background:var(--red);border-radius:3px;"></div></div>
-        <span style="font-size:10px;font-weight:700;color:var(--red);min-width:42px;text-align:right;">${budgetPct}%</span>
+        <span style="font-size:10px;color:var(--muted);width:96px;">Spend</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:${budgetPct}%;height:11px;background:${spendCol};border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:${spendCol};min-width:42px;text-align:right;">${budgetPctTrue}%</span>
         <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">${lcFmt(m.budgetUsed)}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:10px;color:var(--muted);width:96px;">Build complete</span>
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build</span>
         <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:${buildPct}%;height:11px;background:var(--green);border-radius:3px;"></div></div>
         <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">${buildPct}%</span>
         <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">${m.hrsUsed}/441h</span>
@@ -2723,17 +2733,17 @@ function renderPerformance(){
 
   document.getElementById('perf-kpis').innerHTML=`
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;border-top:3px solid var(--green);">
-      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Total Hours Saved</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Hrs Saved</div>
       <div style="font-size:24px;font-weight:800;color:var(--green);">${totalHrsSaved.toLocaleString()}</div>
       <div style="font-size:9px;color:var(--muted);margin-top:3px;">across ${active.length} active rigs</div>
     </div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;border-top:3px solid var(--cyan,#00D4FF);">
-      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Total Days Saved</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Days Saved</div>
       <div style="font-size:24px;font-weight:800;color:var(--cyan,#00D4FF);">${totalDaysSaved.toLocaleString()}</div>
       <div style="font-size:9px;color:var(--muted);margin-top:3px;">ahead of schedule</div>
     </div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;border-top:3px solid var(--gold);">
-      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Budget Remaining</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Balance</div>
       <div style="font-size:24px;font-weight:800;color:var(--gold);">${fmtR(totalBudgetSaved)}</div>
       <div style="font-size:9px;color:var(--muted);margin-top:3px;">across active rigs</div>
     </div>
@@ -2780,8 +2790,8 @@ function renderPerformance(){
       '</div>'
       :
       '<div style="background:rgba(245,168,0,0.06);border-left:4px solid var(--gold);padding:10px 14px;">'+
-        '<div style="font-size:11px;font-weight:700;color:var(--gold);">IN PROGRESS — '+hrsPct+'% complete</div>'+
-        '<div style="font-size:10px;color:var(--muted);margin-top:2px;">'+hrsUsed+' of '+planHrs+' planned hours used · '+hrsSaved+' hours remaining</div>'+
+        '<div style="font-size:11px;font-weight:700;color:var(--gold);">IN PROGRESS — '+hrsPct+'% actual</div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:2px;">'+hrsUsed+' of '+planHrs+' planned hrs · '+hrsSaved+' hrs balance</div>'+
       '</div>';
 
     return `<div style="background:var(--bg2);border:1px solid ${isComplete?'var(--green)':'var(--border)'};border-radius:10px;margin-bottom:12px;overflow:hidden;">
@@ -2811,7 +2821,7 @@ function renderPerformance(){
               <div style="font-size:8px;color:var(--muted);">hours</div>
             </div>
             <div style="background:var(--bg);border:1px solid ${isComplete?'var(--green)':'var(--border)'};border-radius:5px;padding:8px;text-align:center;">
-              <div style="font-size:8px;color:var(--muted);margin-bottom:3px;">${isComplete?'SAVED':'REMAINING'}</div>
+              <div style="font-size:8px;color:var(--muted);margin-bottom:3px;">${isComplete?'SAVED':'BALANCE'}</div>
               <div style="font-size:16px;font-weight:800;color:${isComplete?'var(--green)':'var(--cyan,#00D4FF)'};">${Math.abs(hrsSaved)}</div>
               <div style="font-size:8px;color:var(--muted);">hours</div>
             </div>
@@ -2820,7 +2830,7 @@ function renderPerformance(){
           <div style="margin-top:6px;background:var(--bg4);border-radius:3px;height:6px;overflow:hidden;">
             <div style="width:${hrsPct}%;height:100%;background:${isComplete?'var(--green)':hrsPct>=80?'var(--red)':hrsPct>=50?'var(--gold)':'var(--green)'};border-radius:3px;transition:width 0.5s;"></div>
           </div>
-          <div style="font-size:8px;color:var(--muted);margin-top:2px;">${hrsPct}% of planned hours used</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;">${hrsPct}% of planned hrs</div>
         </div>
 
         <div style="margin-bottom:12px;">
@@ -2849,7 +2859,7 @@ function renderPerformance(){
           <div style="margin-top:6px;background:var(--bg4);border-radius:3px;height:6px;overflow:hidden;">
             <div style="width:${daysPct}%;height:100%;background:${isComplete?'var(--green)':daysPct>=80?'var(--red)':daysPct>=50?'var(--gold)':'var(--green)'};border-radius:3px;transition:width 0.5s;"></div>
           </div>
-          <div style="font-size:8px;color:var(--muted);margin-top:2px;">${daysPct}% of planned days used</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:2px;">${daysPct}% of planned days</div>
         </div>
 
         <!-- Budget row -->
@@ -2859,11 +2869,11 @@ function renderPerformance(){
             <div style="font-size:12px;font-weight:700;color:var(--text);">${fmtR(budgetCost)}</div>
           </div>
           <div>
-            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">ACTUAL SPEND</div>
+            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">ACTUAL</div>
             <div style="font-size:12px;font-weight:700;color:var(--red);">${fmtR(actual)}</div>
           </div>
           <div>
-            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">BUDGET SAVED</div>
+            <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">BALANCE</div>
             <div style="font-size:12px;font-weight:700;color:var(--green);">${fmtR(budgetSaved)}</div>
           </div>
         </div>
@@ -3297,14 +3307,14 @@ function buildPrint(fid){
     <div style="border:1px solid #F5A800;border-radius:5px;padding:9px 11px;"><div style="font-size:9px;color:#666;margin-bottom:2px;">MACHINES</div><div style="font-size:19px;font-weight:800;color:#F5A800;">${ml.length}</div></div>
     <div style="border:1px solid #00A878;border-radius:5px;padding:9px 11px;"><div style="font-size:9px;color:#666;margin-bottom:2px;">FLEET BUDGET</div><div style="font-size:17px;font-weight:800;color:#00A878;">${fmtM(tb)}</div></div>
     <div style="border:1px solid #CC3333;border-radius:5px;padding:9px 11px;"><div style="font-size:9px;color:#666;margin-bottom:2px;">ACTUAL</div><div style="font-size:17px;font-weight:800;color:#CC3333;">${fmtM(ub)} (${pct(ub,tb)}%)</div></div>
-    <div style="border:1px solid #0099BB;border-radius:5px;padding:9px 11px;"><div style="font-size:9px;color:#666;margin-bottom:2px;">REMAINING</div><div style="font-size:17px;font-weight:800;color:#0099BB;">${fmtM(tb-ub)}</div></div>
+    <div style="border:1px solid #0099BB;border-radius:5px;padding:9px 11px;"><div style="font-size:9px;color:#666;margin-bottom:2px;">BALANCE</div><div style="font-size:17px;font-weight:800;color:#0099BB;">${fmtM(tb-ub)}</div></div>
   </div>`;
   h+=`<table style="width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px;">
     <thead><tr style="background:#F5A800;color:#000;">
       <th style="padding:6px 9px;text-align:left;">Machine</th><th style="padding:6px 9px;">Status</th>
       <th style="padding:6px 9px;text-align:center;">%</th>
       ${PN.map(p=>`<th style="padding:6px 9px;text-align:center;">${p.replace(" & "," &amp; ")}</th>`).join("")}
-      <th style="padding:6px 9px;text-align:right;">Budget</th><th style="padding:6px 9px;text-align:right;">Used</th><th style="padding:6px 9px;text-align:right;">Remaining</th>
+      <th style="padding:6px 9px;text-align:right;">Budget</th><th style="padding:6px 9px;text-align:right;">Actual</th><th style="padding:6px 9px;text-align:right;">Balance</th>
     </tr></thead><tbody>`;
   ml.forEach((m,i)=>{
     const p=pct(m.hrsUsed,m.totalHrs);
