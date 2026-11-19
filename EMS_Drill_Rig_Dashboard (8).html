@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0078)https://eric0103360.github.io/rig-dashboard/EMS_Drill_Rig_Dashboard%20(8).html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <!-- PWA Meta Tags -->
 <meta name="mobile-web-app-capable" content="yes">
@@ -19,7 +19,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>EMS Mining — Sandvik D25KS Rebuild Tracker</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="./EMS Mining — Sandvik D25KS Rebuild Tracker_files/chart.umd.js.download"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -276,13 +276,13 @@ input:focus,select:focus{border-color:var(--gold);}
 .toast{position:fixed;bottom:16px;right:16px;background:var(--green);color:#000;font-weight:700;padding:8px 16px;border-radius:5px;font-size:11px;display:none;z-index:9998;}
 </style>
 <!-- Firebase SDK - loaded synchronously so firebase is available immediately -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" type="text/javascript"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" type="text/javascript"></script>
+<script src="./EMS Mining — Sandvik D25KS Rebuild Tracker_files/firebase-app-compat.js.download" type="text/javascript"></script>
+<script src="./EMS Mining — Sandvik D25KS Rebuild Tracker_files/firebase-firestore-compat.js.download" type="text/javascript"></script>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen">
+<div id="login-screen" style="display: none;">
   <div class="login-box">
     <img src="data:image/png;base64,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" style="height:54px;width:auto;mix-blend-mode:screen;" alt="EMS Mining">
     <div class="login-title">EMS MINING</div>
@@ -301,7 +301,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none;">
+<div id="app" style="display: block;">
 
 <div class="hdr">
   <div style="display:flex;align-items:center;gap:13px;">
@@ -312,10 +312,10 @@ input:focus,select:focus{border-color:var(--gold);}
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:11px;">
-    <div id="rbadge" class="rbadge viewer">VIEWER</div>
+    <div id="rbadge" class="rbadge admin">ADMIN — DATA CAPTURER</div>
     <div style="display:flex;align-items:center;gap:5px;"><div class="live-dot"></div><span style="font-size:10px;color:var(--green);font-weight:700;">LIVE</span></div>
-    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock"></div>
-    <button class="btn gold ao" id="pushLiveBtn" style="font-size:10px;padding:5px 11px;" onclick="showPushModal()">⬆ PUSH LIVE</button>
+    <div style="font-size:10px;color:var(--muted);text-align:right;" id="clock">06 Nov 2026<br>09:57</div>
+    <button class="btn gold ao" id="pushLiveBtn" style="font-size: 10px; padding: 5px 11px; display: block;" onclick="showPushModal()">⬆ PUSH LIVE</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;border-color:var(--green);color:var(--green);" onclick="backupData()" title="Download all your data as a backup file">⬇ BACKUP</button>
     <button class="btn dark" style="font-size:10px;padding:5px 11px;" onclick="document.getElementById('restore-input').click()" title="Restore data from a backup file">⬆ RESTORE</button>
     <input type="file" id="restore-input" accept=".json" style="display:none;" onchange="restoreData(event)">
@@ -328,8 +328,8 @@ input:focus,select:focus{border-color:var(--gold);}
   <div class="nt" onclick="sp('phases',this)">PHASE PROGRESS</div>
   <div class="nt" onclick="sp('machine',this)">MACHINE DETAIL</div>
 
-  <div class="nt ao" id="tab-tasks" onclick="sp('tasks',this)">✎ TASK ENTRY</div>
-  <div class="nt" id="tab-labour" onclick="sp('labour',this)">&#9654; EARNED VALUE (EV) &amp; DAYS</div>
+  <div class="nt ao" id="tab-tasks" onclick="sp('tasks',this)" style="display: block;">✎ TASK ENTRY</div>
+  <div class="nt" id="tab-labour" onclick="sp('labour',this)">▶ EARNED VALUE (EV) &amp; DAYS</div>
   <div class="nt" onclick="sp('performance',this)">📊 PERFORMANCE</div>
   
   <div class="nt" onclick="showPrint()">⎙ PRINT</div>
@@ -337,27 +337,429 @@ input:focus,select:focus{border-color:var(--gold);}
 
 <!-- PAGE 1: FLEET -->
 <div id="page-fleet" class="page active">
-  <div class="krow" id="fleet-kpis"></div>
-  <div class="fbar" id="fleet-bud"></div>
+  <div class="krow" id="fleet-kpis">
+    <div class="kpi r"><div class="kl">ACTUAL — FLEET</div><div class="kv r">R 14.04M</div><div class="ks">15.6% of R90M · all 15 rigs</div></div>
+    <div class="kpi gr"><div class="kl">BALANCE — FLEET</div><div class="kv gr">R 75.96M</div><div class="ks">84.4% balance · all 15 rigs</div></div>
+    <div class="kpi g"><div class="kl">PLANNED HRS — IN BUILD</div><div class="kv g">1,764</div><div class="ks">4 rigs in build · 6,615 across all 15</div></div>
+    <div class="kpi c"><div class="kl">ACTUAL HRS — IN BUILD</div><div class="kv c">1,481</div><div class="ks">84% of 1,764 · 3 active · 1 complete</div></div></div>
+  <div class="fbar" id="fleet-bud">
+    <div style="min-width:110px;"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;">FLEET BUDGET — ALL RIGS</div><div style="font-size:18px;font-weight:800;color:var(--gold);">R 90.00M</div></div>
+    <div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>Actual: <strong style="color:var(--text);">R 14.04M</strong></span><span>Balance: <strong style="color:var(--green);">R 75.96M</strong></span><strong style="color:var(--gold);">15.6% actual</strong></div>
+    <div class="fb-track"><div class="fb-fill" style="width:15.6%;"></div></div></div></div>
 
   <div class="sec" style="margin-top:4px;">REBUILD STATUS SUMMARY</div>
   <div class="cc" style="padding:0;overflow:hidden;margin-bottom:13px;" id="rebuild-summary-wrap">
-    <div id="rebuild-summary"></div>
+    <div id="rebuild-summary">
+  <div style="padding:9px 13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg3);">
+    <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;">D25KS REBUILD UPDATE — NOVEMBER 2026</span>
+    <span style="font-size:10px;color:var(--muted);">Balance: <span style="color:var(--green);font-weight:700;">R 9&nbsp;964&nbsp;636</span></span>
+  </div>
+  <div style="overflow-x:auto;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr style="background:var(--bg3);border-bottom:1px solid var(--border);">
+      <th style="padding:7px 12px;text-align:left;font-size:9px;font-weight:700;color:var(--muted);"></th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>HRS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">ACTUAL<br>HRS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">PLANNED<br>DAYS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">ACTUAL<br>DAYS</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">DAYS<br>BALANCE</th>
+      <th style="padding:7px 8px;text-align:center;font-size:9px;font-weight:700;color:#D8E4F0;">LABOUR<br>%</th>
+      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);">BUDGET</th>
+      <th style="padding:7px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--muted);">ACTUAL<br>BALANCE</th>
+    </tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK004 <span style="font-size:8px;padding:1px 6px;border-radius:3px;background:rgba(0,200,150,0.15);color:var(--green);">ON BUDGET</span></td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">441</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">270</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">30</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--green);">19</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">61%</span>
+        <div style="font-size:9px;color:var(--muted);font-weight:400;">270 of 441 hrs</div>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">ACTUAL</span>
+          <span style="color:var(--text);font-weight:700;font-size:13px;">R 5&nbsp;812&nbsp;236</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">BALANCE</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 187&nbsp;764</span>
+        </div>
+        <div style="font-size:9px;color:var(--green);font-weight:700;text-align:right;">96.9% actual · 3.1% balance</div>
+      </td>
+    </tr><tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK007 <span style="font-size:8px;padding:1px 6px;border-radius:3px;background:rgba(0,200,150,0.15);color:var(--green);">ON BUDGET</span></td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">441</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">423</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">47</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--green);">2</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">96%</span>
+        <div style="font-size:9px;color:var(--muted);font-weight:400;">423 of 441 hrs</div>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">ACTUAL</span>
+          <span style="color:var(--text);font-weight:700;font-size:13px;">R 1&nbsp;886&nbsp;075</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">BALANCE</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 4&nbsp;113&nbsp;925</span>
+        </div>
+        <div style="font-size:9px;color:var(--green);font-weight:700;text-align:right;">31.4% actual · 68.6% balance</div>
+      </td>
+    </tr><tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:8px 12px;font-weight:700;color:var(--gold);font-size:11px;">DK014 <span style="font-size:8px;padding:1px 6px;border-radius:3px;background:rgba(0,200,150,0.15);color:var(--green);">ON BUDGET</span></td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">441</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--gold);font-weight:700;">387</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">49</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;">43</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--green);">6</td>
+      <td style="padding:8px 8px;text-align:center;font-size:11px;font-weight:700;">
+        <span style="color:var(--text);">88%</span>
+        <div style="font-size:9px;color:var(--muted);font-weight:400;">387 of 441 hrs</div>
+      </td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">R 6&nbsp;000&nbsp;000</td>
+      <td style="padding:8px 12px;text-align:right;font-size:11px;">
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">ACTUAL</span>
+          <span style="color:var(--text);font-weight:700;font-size:13px;">R 4&nbsp;931&nbsp;394</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px;">
+          <span style="color:var(--muted);font-size:9px;font-weight:700;">BALANCE</span>
+          <span style="color:var(--green);font-weight:700;font-size:13px;">R 1&nbsp;068&nbsp;606</span>
+        </div>
+        <div style="font-size:9px;color:var(--green);font-weight:700;text-align:right;">82.2% actual · 17.8% balance</div>
+      </td>
+    </tr><tr><td colspan="9" style="padding:0"><div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,200,150,0.06);border-top:1px dashed rgba(0,200,150,0.3);border-bottom:1px dashed rgba(0,200,150,0.3);"><span style="font-size:8.5px;color:var(--green);font-weight:700;letter-spacing:1px;">✓ COMPLETED BUILDS</span></div></td></tr><tr style="border-bottom:1px solid rgba(0,200,150,0.15);background:rgba(0,200,150,0.04);">
+        <td style="padding:8px 12px;font-size:11px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:700;color:var(--green);">DK013</span>
+            <span style="font-size:8px;padding:1px 6px;border-radius:3px;font-weight:700;background:rgba(0,200,150,0.15);color:var(--green);border:1px solid rgba(0,200,150,0.3);">COMPLETE</span>
+          </div>
+        </td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">441</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--green);font-weight:700;">401</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">49</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">44.5</td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;">
+          <div style="color:var(--green);font-weight:700;font-size:10px;">✓ Done</div>
+          <div style="font-size:8px;color:var(--green);">4.5 days early</div>
+        </td>
+        <td style="padding:8px 8px;text-align:center;font-size:11px;color:var(--muted);">91%</td>
+        <td style="padding:8px 12px;text-align:right;font-size:11px;color:var(--muted);">R 6&nbsp;000&nbsp;000</td>
+        <td style="padding:8px 12px;text-align:right;font-size:11px;">
+          <div style="font-size:9px;color:var(--muted);">ACTUAL</div>
+          <div style="color:var(--red);font-weight:700;font-size:12px;">R 1&nbsp;405&nbsp;659</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px;">SAVED</div>
+          <div style="color:var(--green);font-weight:700;font-size:12px;">R 4&nbsp;594&nbsp;341</div>
+        </td>
+      </tr>
+      <tr style="background:var(--bg2);border-top:2px solid var(--border);">
+        <td colspan="7" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--gold);">TOTAL — 4 RIGS IN BUILD</td>
+        <td style="padding:9px 12px;text-align:right;font-size:11px;">R 24&nbsp;000&nbsp;000</td>
+        <td style="padding:9px 12px;text-align:right;font-size:13px;font-weight:800;color:var(--red);">R 9&nbsp;964&nbsp;636</td>
+      </tr>
+    </tbody>
+  </table></div></div>
   </div>
 
   <div class="crow" style="margin-bottom:13px;">
     <div class="cc">
       <div class="cct">LABOUR % — PER RIG</div>
-      <div id="ch-labour-pct" style="padding:8px 4px;"></div>
+      <div id="ch-labour-pct" style="padding:8px 4px;">
+      <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#F0B42D;border-radius:2px;display:inline-block;"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Balance</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Over</span>
+      </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK004</span>
+            <span style="font-size:10px;color:var(--muted);">61% actual · 39% balance</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:61%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">61%</span></div>
+            <div style="width:39%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">39%</span></div>
+          </div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK007</span>
+            <span style="font-size:10px;color:var(--muted);">96% actual · 4% balance</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:96%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">96%</span></div>
+            <div style="width:4%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;"></span></div>
+          </div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--green);">DK013 <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span></span>
+            <span style="font-size:10px;color:var(--muted);">✓ Build complete</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            
+            <div style="width:100%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">✓ Done</span></div>
+          </div>
+        </div><div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK014</span>
+            <span style="font-size:10px;color:var(--muted);">88% actual · 12% balance</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:88%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">88%</span></div>
+            <div style="width:12%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">12%</span></div>
+          </div>
+        </div></div>
     </div>
     <div class="cc">
       <div class="cct">BUDGET — PER RIG</div>
-      <div id="ch-rebuild-pct" style="padding:8px 4px;"></div>
+      <div id="ch-rebuild-pct" style="padding:8px 4px;">
+      <div style="display:flex;gap:16px;margin-bottom:10px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#F0B42D;border-radius:2px;display:inline-block;"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Balance</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:10px;background:#E24B4A;border-radius:2px;display:inline-block;"></span>Over</span>
+      </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK004</span>
+            <span style="font-size:10px;color:var(--muted);">R 5&nbsp;812&nbsp;236 actual · R 187&nbsp;764 balance</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:96.9%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">96.9%</span></div>
+            <div style="width:3.1%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;"></span></div>
+          </div>
+        </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK007</span>
+            <span style="font-size:10px;color:var(--muted);">R 1&nbsp;886&nbsp;075 actual · R 4&nbsp;113&nbsp;925 balance</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:31.4%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">31.4%</span></div>
+            <div style="width:68.6%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">68.6%</span></div>
+          </div>
+        </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--green);">DK013 <span style="font-size:8px;padding:1px 5px;background:rgba(0,200,150,0.15);border-radius:3px;color:var(--green);">COMPLETE</span></span>
+            <span style="font-size:10px;color:var(--muted);">R 1&nbsp;405&nbsp;659 actual · R 4&nbsp;594&nbsp;341 saved</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:23.4%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">23.4%</span></div>
+            <div style="width:76.6%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">76.6%</span></div>
+          </div>
+        </div><div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);">DK014</span>
+            <span style="font-size:10px;color:var(--muted);">R 4&nbsp;931&nbsp;394 actual · R 1&nbsp;068&nbsp;606 balance</span>
+          </div>
+          <div style="display:flex;border-radius:4px;overflow:hidden;height:18px;background:var(--bg4);">
+            <div style="width:82.2%;background:#F0B42D;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">82.2%</span></div>
+            <div style="width:17.8%;background:#1D9E75;display:flex;align-items:center;justify-content:center;transition:width 0.4s;"><span style="font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 3px;">17.8%</span></div>
+          </div>
+        </div></div>
     </div>
   </div>
 
   <div class="sec" style="margin-top:4px;">BUDGET PER MACHINE</div>
-  <div class="bpm" id="bpm-fleet"></div>
+  <div class="bpm" id="bpm-fleet"><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK003</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--red);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK004</span>
+        <span class="badge ba">ACTIVE</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:96.9%;background:var(--red);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 5&nbsp;812&nbsp;236</span><span style="color:var(--red);font-weight:700;">96.9%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">270 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:61.2%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 187&nbsp;764 · 171h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK005</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK006</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK007</span>
+        <span class="badge ba">ACTIVE</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:31.4%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 1&nbsp;886&nbsp;075</span><span style="color:var(--gold);font-weight:700;">31.4%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">423 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:95.9%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 4&nbsp;113&nbsp;925 · 18h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK008</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK009</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK010</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK011</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK012</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--green);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--green);">DK013</span>
+        <span class="badge bd">COMPLETE</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--green);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:23.4%;background:var(--green);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 1&nbsp;405&nbsp;659</span><span style="color:var(--green);font-weight:700;">23.4%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--green);font-weight:700;">401 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:90.9%;background:var(--green);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        ✓ Complete — R 4&nbsp;594&nbsp;341 saved
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK014</span>
+        <span class="badge ba">ACTIVE</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:82.2%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 4&nbsp;931&nbsp;394</span><span style="color:var(--gold);font-weight:700;">82.2%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">387 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:87.8%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 1&nbsp;068&nbsp;606 · 54h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK015</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK016</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div><div class="bpmc" style="border-left:3px solid var(--gold);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;font-weight:800;color:var(--gold);">DK017</span>
+        <span class="badge bp">PLANNED</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#FFFFFF;font-weight:600;">Budget</span><span style="color:var(--gold);font-weight:700;">R 6&nbsp;000&nbsp;000</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:3px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span style="color:#FFFFFF;font-weight:600;">Actual: R 0</span><span style="color:var(--gold);font-weight:700;">0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;"><span style="color:#FFFFFF;font-weight:600;">Hours</span><span style="color:var(--gold);font-weight:700;">0 / 441h</span></div>
+      <div style="background:var(--bg);border-radius:2px;height:5px;margin-bottom:2px;"><div style="height:5px;border-radius:2px;width:0%;background:var(--gold);opacity:0.7;"></div></div>
+      <div style="font-size:9px;color:var(--green);margin-top:2px;">
+        Balance: R 6&nbsp;000&nbsp;000 · 441h
+      </div>
+    </div></div>
 
   <div class="sec" style="margin-top:4px;">BUDGET EFFICIENCY — SPEND vs BUILD PROGRESS</div>
   <div class="cc" id="efficiency-section-fleet">
@@ -366,12 +768,80 @@ input:focus,select:focus{border-color:var(--gold);}
       <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--gold);display:inline-block;"></span>Spend %</span>
       <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block;"></span>Build %</span>
     </div>
-    <div id="efficiency-rows-fleet"></div>
+    <div id="efficiency-rows-fleet"><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK004</span>
+        <span style="font-size:9px;font-weight:700;color:var(--red);">⚠ Spend ahead of build by 35.7% — review</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Spend</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:96.9%;height:11px;background:var(--gold);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--gold);min-width:42px;text-align:right;">96.9%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 5&nbsp;812&nbsp;236</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:61.2%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">61.2%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">270/441h</span>
+      </div>
+    </div><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK007</span>
+        <span style="font-size:9px;font-weight:700;color:var(--green);">✓ Build ahead of spend by 64.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Spend</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:31.4%;height:11px;background:var(--gold);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--gold);min-width:42px;text-align:right;">31.4%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 1&nbsp;886&nbsp;075</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:95.9%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">95.9%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">423/441h</span>
+      </div>
+    </div><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK013</span>
+        <span style="font-size:9px;font-weight:700;color:var(--green);">✓ Build ahead of spend by 67.5%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Spend</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:23.4%;height:11px;background:var(--gold);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--gold);min-width:42px;text-align:right;">23.4%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 1&nbsp;405&nbsp;659</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:90.9%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">90.9%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">401/441h</span>
+      </div>
+    </div><div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--gold);">DK014</span>
+        <span style="font-size:9px;font-weight:700;color:var(--green);">✓ Build ahead of spend by 5.6%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Spend</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:82.2%;height:11px;background:var(--gold);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--gold);min-width:42px;text-align:right;">82.2%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">R 4&nbsp;931&nbsp;394</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:var(--muted);width:96px;">Build</span>
+        <div style="flex:1;background:var(--bg4);border-radius:3px;height:11px;overflow:hidden;"><div style="width:87.8%;height:11px;background:var(--green);border-radius:3px;"></div></div>
+        <span style="font-size:10px;font-weight:700;color:var(--green);min-width:42px;text-align:right;">87.8%</span>
+        <span style="font-size:10px;color:var(--muted);min-width:80px;text-align:right;">387/441h</span>
+      </div>
+    </div></div>
   </div>
 
   <div class="crow">
-    <div class="cc"><div class="cct">MACHINE BUILD PROGRESS</div><div style="position:relative;height:280px;"><canvas id="ch-m"></canvas></div></div>
-    <div class="cc"><div class="cct">FLEET STATUS</div><div style="position:relative;height:180px;"><canvas id="ch-s"></canvas></div><div id="sleg" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:10px;"></div></div>
+    <div class="cc"><div class="cct">MACHINE BUILD PROGRESS</div><div style="position:relative;height:280px;"><canvas id="ch-m" width="906" height="233" style="display: block; box-sizing: border-box; height: 280px; width: 1087px;"></canvas></div></div>
+    <div class="cc"><div class="cct">FLEET STATUS</div><div style="position:relative;height:180px;"><canvas id="ch-s" width="906" height="150" style="display: block; box-sizing: border-box; height: 180px; width: 1087px;"></canvas></div><div id="sleg" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:10px;"><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#F5A800;border-radius:2px;display:inline-block;"></span>Active: 3</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#00C896;border-radius:2px;display:inline-block;"></span>Complete: 1</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#5A9BD4;border-radius:2px;display:inline-block;"></span>Planned: 11</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;background:#FF4B4B;border-radius:2px;display:inline-block;"></span>On Hold: 0</span></div></div>
   </div>
 </div>
 
@@ -408,8 +878,8 @@ input:focus,select:focus{border-color:var(--gold);}
 
   <!-- S1: FLEET BUDGET OVERVIEW - always open -->
   <div class="bsec-hdr bsec-open" onclick="bToggle(this)" id="bsec1-hdr">
-    <span class="bsec-title">&#9632; FLEET BUDGET OVERVIEW</span>
-    <span class="bsec-arrow">&#9660;</span>
+    <span class="bsec-title">■ FLEET BUDGET OVERVIEW</span>
+    <span class="bsec-arrow">▼</span>
   </div>
   <div class="bsec-body bsec-open" id="bsec1-body">
     <div class="bc3" id="bov"></div>
@@ -417,9 +887,9 @@ input:focus,select:focus{border-color:var(--gold);}
 
   <!-- S2: BUDGET PER MACHINE - always open -->
   <div class="bsec-hdr bsec-open" onclick="bToggle(this)" id="bsec2-hdr">
-    <span class="bsec-title">&#9632; BUDGET PER MACHINE</span>
+    <span class="bsec-title">■ BUDGET PER MACHINE</span>
     <span class="bsec-badge" id="bsec2-badge"></span>
-    <span class="bsec-arrow">&#9660;</span>
+    <span class="bsec-arrow">▼</span>
   </div>
   <div class="bsec-body bsec-open" id="bsec2-body">
     <div class="bpm" id="bpm"></div>
@@ -427,8 +897,8 @@ input:focus,select:focus{border-color:var(--gold);}
 
   <!-- S3: BUDGET EFFICIENCY - open by default -->
   <div class="bsec-hdr bsec-open" onclick="bToggle(this)" id="bsec3-hdr">
-    <span class="bsec-title">&#9632; BUDGET EFFICIENCY — SPEND vs BUILD PROGRESS</span>
-    <span class="bsec-arrow">&#9660;</span>
+    <span class="bsec-title">■ BUDGET EFFICIENCY — SPEND vs BUILD PROGRESS</span>
+    <span class="bsec-arrow">▼</span>
   </div>
   <div class="bsec-body bsec-open" id="bsec3-body">
     <div class="cc" id="efficiency-section">
@@ -445,9 +915,9 @@ input:focus,select:focus{border-color:var(--gold);}
 
   <!-- S5: CHARTS - collapsed by default -->
   <div class="bsec-hdr" onclick="bToggle(this)" id="bsec5-hdr">
-    <span class="bsec-title">&#9632; BUDGET &amp; HOURS CHARTS</span>
+    <span class="bsec-title">■ BUDGET &amp; HOURS CHARTS</span>
     <span class="bsec-badge">Click to expand</span>
-    <span class="bsec-arrow">&#9654;</span>
+    <span class="bsec-arrow">▶</span>
   </div>
   <div class="bsec-body" id="bsec5-body">
     <div class="cc"><div class="cct">ACTUAL vs BALANCE — ALL MACHINES</div><div style="position:relative;height:260px;"><canvas id="ch-bf"></canvas></div></div>
@@ -516,8 +986,8 @@ input:focus,select:focus{border-color:var(--gold);}
   </div>
   <div id="egrid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;"></div>
   <div style="display:flex;gap:10px;align-items:center;margin-top:13px;flex-wrap:wrap;">
-    <button class="btn ao" onclick="saveEdit()">SAVE DATA</button>
-    <button class="btn green ao" onclick="showAddMachine()">+ ADD MACHINE</button>
+    <button class="btn ao" onclick="saveEdit()" style="display: block;">SAVE DATA</button>
+    <button class="btn green ao" onclick="showAddMachine()" style="display: block;">+ ADD MACHINE</button>
     <button class="btn gold" onclick="exportData()">EXPORT JSON</button>
     <button class="btn dark" onclick="resetAll()">RESET TO DEFAULT</button>
   </div>
@@ -571,7 +1041,7 @@ input:focus,select:focus{border-color:var(--gold);}
 
 <!-- PAGE 7: LABOUR COST + EV TRACKER -->
 <div id="page-labour" class="page">
-  <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#9632; EARNED VALUE (EV) &amp; DAYS TRACKER</div>
+  <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid var(--border);">■ EARNED VALUE (EV) &amp; DAYS TRACKER</div>
   <div style="font-size:9px;color:var(--muted);margin-bottom:10px;">Labour budget per rig = R550,000 (editable). Earned value = Build % × budget. Balance = what is still to be consumed as build progresses. Build % comes from Task Entry actual hrs.</div>
   <div id="ev-rows-lc"></div>
   <div style="margin-top:16px;">
@@ -594,7 +1064,7 @@ input:focus,select:focus{border-color:var(--gold);}
       <button onclick="document.getElementById('add-machine-form').style.display='none'" style="padding:7px 14px;background:var(--bg4);color:var(--muted);border:1px solid var(--border);border-radius:4px;font-size:11px;cursor:pointer;">Cancel</button>
     </div>
   </div>
-  <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin:18px 0 13px;padding-bottom:8px;border-bottom:1px solid var(--border);display:none;">&#9632; LABOUR COST ASSUMPTIONS</div>
+  <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin:18px 0 13px;padding-bottom:8px;border-bottom:1px solid var(--border);display:none;">■ LABOUR COST ASSUMPTIONS</div>
 
   <!-- ESTIMATE NOTICE -->
 
@@ -603,7 +1073,7 @@ input:focus,select:focus{border-color:var(--gold);}
 
     <!-- LEFT: EDITABLE ASSUMPTIONS BLOCK -->
     <div style="background:var(--bg3);border-radius:7px;padding:15px 17px;border:1px solid var(--border);">
-      <div class="sec" style="margin-top:0;">&#9998; TEAM COST ASSUMPTIONS</div>
+      <div class="sec" style="margin-top:0;">✎ TEAM COST ASSUMPTIONS</div>
       <div style="font-size:9px;color:var(--muted);margin-bottom:12px;line-height:1.5;">Click any value below to edit. Press Tab or Enter to move to the next field. All figures update the results automatically.</div>
 
       <!-- input row helper styles inline -->
@@ -612,7 +1082,7 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">NUMBER OF TEAM MEMBERS</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">All staff incl. storemen, drivers &amp; assistants</div>
         </div>
-        <input type="number" id="lc-members" value="16" min="1" max="100" step="1" oninput="lcCalc()" style="width:72px;text-align:right;font-size:14px;font-weight:800;color:var(--gold);background:var(--bg4);border:1px solid var(--gold);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-members" value="16" min="1" max="100" step="1" oninput="lcCalc()" style="width: 72px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
@@ -620,7 +1090,7 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">TOTAL MONTHLY SALARIES — ALL STAFF (R)</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Total salary bill for all 16 people combined</div>
         </div>
-        <input type="number" id="lc-salary" value="420000" min="1000" max="200000" step="500" oninput="lcCalc()" style="width:100px;text-align:right;font-size:13px;font-weight:800;color:var(--gold);background:var(--bg4);border:1px solid var(--gold);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-salary" value="420000" min="1000" max="200000" step="500" oninput="lcCalc()" style="width: 100px; text-align: right; font-size: 13px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
@@ -628,7 +1098,7 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">MONTHLY OVERHEAD (rent, lease, water, lights, security) (R)</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Fixed monthly factory overhead costs</div>
         </div>
-        <input type="number" id="lc-overhead" value="200000" min="0" max="2000000" step="1000" oninput="lcCalc()" style="width:72px;text-align:right;font-size:14px;font-weight:800;color:var(--gold);background:var(--bg4);border:1px solid var(--gold);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-overhead" value="200000" min="0" max="2000000" step="1000" oninput="lcCalc()" style="width: 72px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
@@ -636,17 +1106,17 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">WORKING HOURS PER PERSON PER MONTH</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Updated: 198 hrs (22 days × 9 hrs)</div>
         </div>
-        <input type="number" id="lc-hours" value="198" min="80" max="300" step="1" oninput="lcCalc()" style="width:72px;text-align:right;font-size:14px;font-weight:800;color:var(--gold);background:var(--bg4);border:1px solid var(--gold);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-hours" value="198" min="80" max="300" step="1" oninput="lcCalc()" style="width: 72px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
-      <div class="sec" style="margin-top:13px;">&#9998; RIG REBUILD ASSUMPTIONS</div>
+      <div class="sec" style="margin-top:13px;">✎ RIG REBUILD ASSUMPTIONS</div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
         <div>
           <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">TOTAL HOURS TO REBUILD ONE RIG</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Sum of all task planned hours in the tracker</div>
         </div>
-        <input type="number" id="lc-righrs" value="712" min="50" max="5000" step="1" oninput="lcCalc()" style="width:80px;text-align:right;font-size:14px;font-weight:800;color:var(--gold);background:var(--bg4);border:1px solid var(--gold);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-righrs" value="712" min="50" max="5000" step="1" oninput="lcCalc()" style="width: 80px; text-align: right; font-size: 14px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:9px;padding:8px 10px;background:var(--bg2);border-radius:5px;border:1px solid var(--border);">
@@ -654,7 +1124,7 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--muted);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">PARTS BUDGET PER RIG (R)</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Estimated or confirmed parts/materials cost per unit</div>
         </div>
-        <input type="number" id="lc-parts" value="5762403" min="0" max="50000000" step="1000" oninput="lcCalc()" style="width:110px;text-align:right;font-size:12px;font-weight:800;color:var(--gold);background:var(--bg4);border:1px solid var(--gold);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-parts" value="5762403" min="0" max="50000000" step="1000" oninput="lcCalc()" style="width: 110px; text-align: right; font-size: 12px; font-weight: 800; color: var(--gold); background: var(--bg4); border: 1px solid var(--gold); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:8px;padding:8px 10px;background:rgba(0,200,150,0.07);border-radius:5px;border:1px solid rgba(0,200,150,0.3);">
@@ -662,7 +1132,7 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--green);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">BUDGET PER RIG (R)</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Approved rebuild budget per machine</div>
         </div>
-        <input type="number" id="lc-budget" value="6000000" min="0" max="50000000" step="100000" oninput="lcCalc()" style="width:110px;text-align:right;font-size:12px;font-weight:800;color:var(--green);background:var(--bg4);border:1px solid var(--green);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-budget" value="6000000" min="0" max="50000000" step="100000" oninput="lcCalc()" style="width: 110px; text-align: right; font-size: 12px; font-weight: 800; color: var(--green); background: var(--bg4); border: 1px solid var(--green); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
 
       <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;margin-bottom:4px;padding:8px 10px;background:rgba(255,85,85,0.07);border-radius:5px;border:1px solid rgba(255,85,85,0.3);">
@@ -670,7 +1140,7 @@ input:focus,select:focus{border-color:var(--gold);}
           <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:0.5px;margin-bottom:2px;">WARNING THRESHOLD — LABOUR % OF TOTAL BUDGET</div>
           <div style="font-size:9px;color:var(--muted);font-style:italic;">Flag when labour exceeds this % of rig cost</div>
         </div>
-        <input type="number" id="lc-warn" value="20" min="1" max="100" step="1" oninput="lcCalc()" style="width:60px;text-align:right;font-size:14px;font-weight:800;color:var(--red);background:var(--bg4);border:1px solid var(--red);border-radius:4px;padding:5px 8px;">
+        <input type="number" id="lc-warn" value="20" min="1" max="100" step="1" oninput="lcCalc()" style="width: 60px; text-align: right; font-size: 14px; font-weight: 800; color: var(--red); background: var(--bg4); border: 1px solid var(--red); border-radius: 4px; padding: 5px 8px; opacity: 1; cursor: auto;">
       </div>
       <div style="font-size:9px;color:var(--muted);text-align:right;padding-right:4px;margin-top:2px;">%</div>
 
@@ -805,7 +1275,7 @@ input:focus,select:focus{border-color:var(--gold);}
 </div>
 
 </div><!-- /app -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" style="display: none;">✓ Cloud data loaded</div>
 
 <script>
 // ═══════════════════════════════
@@ -921,10 +1391,18 @@ localStorage.setItem = function(k,v){
   }
 };
 
+// ── MAINTENANCE MODE — true = ALL logins blocked (admin + viewer). Data is untouched. Set to false to restore access. ──
+const MAINTENANCE_MODE = true;
+const MAINTENANCE_MSG = "Dashboard temporarily offline for maintenance. Please check back shortly.";
+
 const USERS={viewer:{pass:"ems2026",role:"viewer"},admin:{pass:"ems1234",role:"admin"}};
 let role=null;
 
 function login(){
+  if(MAINTENANCE_MODE){
+    document.getElementById("lerr").textContent=MAINTENANCE_MSG;
+    return;
+  }
   const u=document.getElementById("lu").value.trim().toLowerCase();
   const p=document.getElementById("lp").value.trim();
   const usr=USERS[u];
@@ -3445,6 +3923,13 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.getElementB
   const DATA_URL='https://eric0103360.github.io/rig-dashboard/ems-data.json';
   // Always show login screen — no auto-login
   // This prevents admin session from leaking to other users
+  if(MAINTENANCE_MODE){
+    const sub=document.querySelector('.login-sub');
+    if(sub) sub.innerHTML='<span style="color:var(--red);font-weight:700;">'+MAINTENANCE_MSG+'</span>';
+    ['lu','lp'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=true;});
+    const errEl=document.getElementById('lerr');
+    if(errEl) errEl.textContent=MAINTENANCE_MSG;
+  }
   // Try to init Firebase on page load (scripts should be ready by now)
   setTimeout(function(){ initFirebase(); }, 500);
   console.log('EMS Tracker ready — please sign in');
@@ -3670,5 +4155,6 @@ function lcSetRole(role){
 
 
 
-</body>
-</html>
+
+
+</body></html>
